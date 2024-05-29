@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import { ChatMessage } from "../models/message.model.js";
-import { removeLocalFile } from "../utils/RemoveLocalFile";
+import { removeLocalFile } from "../utils/helper.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Chat } from "../models/chat.model.js";
+import { emitSocketEvent } from "../socket/index.js";
+import { ChatEventEnum } from "../constants.js";
 
 const chatCommonAggregation = () => {
     return [
@@ -144,7 +146,12 @@ const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
     payload?.participants.forEach((participant)=>{
         if(participant.toString() === req.user._id.toString()) return;
 
-        //205
+    emitSocketEvent(
+        req,
+        participant._id?.toString(),
+        ChatEventEnum.NEW_CHAT_EVENT,
+        payload
+    )
         
     })
     return res
@@ -189,13 +196,25 @@ const createAGroupChat = asyncHandler(async (req, res) => {
         ...chatCommonAggregation(),
       ]);
 
-      if(!chat){
+      const payload = chat[0]
+      if(!payload){
         throw new ApiError(500,"Something went wrong while creating the group chat")
       }
 
+      payload?.participants.forEach((participant)=>{
+        if(participant?.toString() === req.user._id.toString()) return;
+
+        emitSocketEvent(
+            req,
+            participant._id?.toString(),
+            ChatEventEnum.NEW_CHAT_EVENT,
+            payload
+        )
+      })
+
       return res
       .status(200)
-      .json(new ApiResponse(200,chat,"Group Chat Created Successfully"))
+      .json(new ApiResponse(200,payload,"Group Chat Created Successfully"))
 })
 
 const deleteGroupChat = asyncHandler(async (req, res) => {
@@ -208,8 +227,18 @@ const deleteGroupChat = asyncHandler(async (req, res) => {
         throw new ApiError(403, "You are not authorized to delete this chat")
     }
 
-    deleteCascadeChatMessage(chatId)
     await Chat.deleteOne({ _id: new mongoose.Types.ObjectId(chatId) })
+    deleteCascadeChatMessage(chatId)
+
+    chat?.participants?.forEach((participant)=>{
+        if(participant.toString() === req.user._id.toString()) return
+        emitSocketEvent(
+            req,
+            participant._id?.toString(),
+            ChatEventEnum.LEAVE_CHAT_EVENT,
+            chat
+        )
+    })
 
     return res
         .status(200)
@@ -217,16 +246,27 @@ const deleteGroupChat = asyncHandler(async (req, res) => {
 })
 const deleteOneOnOneChat = asyncHandler(async (req, res) => {
     const { chatId } = req.params
-    const chat = await Chat.find({ _id: new mongoose.Types.ObjectId(chatId), isGroupChat: false })
+    const chat = await Chat.findOne({ _id: new mongoose.Types.ObjectId(chatId), isGroupChat: false })
     if (!chat) {
         throw new ApiError(404, "Chat Not Found")
     }
     if (chat.participants.contains(new mongoose.Types.ObjectId(req.user._id))) {
         throw new ApiError(403, "You are not authorized to delete this chat")
     }
-
-    deleteCascadeChatMessage(chatId)
     await Chat.deleteOne({ _id: new mongoose.Types.ObjectId(chatId) })
+    deleteCascadeChatMessage(chatId)
+
+    const otherParticipant = chat?.participants?.filter((participant) => { return participant.toString() !== req.user._id.toString() })
+    if (!otherParticipant) {
+        throw new ApiError(500, "Something went wrong while deleting the chat")
+    }
+    emitSocketEvent(
+        req,
+        otherParticipant,
+        ChatEventEnum.LEAVE_CHAT_EVENT,
+        chat
+    )
+    
 
     return res
         .status(200)
@@ -256,7 +296,7 @@ const getAllChats = asyncHandler(async (req, res) => {
 })
 const getGroupChatDetails = asyncHandler(async (req, res) => {
     const { chatId } = req.params
-    const chat = await Chat.aggregate([
+    const groupChat = await Chat.aggregate([
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(chatId),
@@ -266,68 +306,103 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
         ...chatCommonAggregation()
     ])
 
+    const chat = groupChat[0]
     if (!chat) {
         throw new ApiError(404, "Chat Not Found")
+    }
+    if (!chat.participants.contains(new mongoose.Types.ObjectId(req.user._id))) {
+        throw new ApiError(403, "You are not authorized to view this chat")
     }
 
     return res.status(200).json(new ApiResponse(200, chat, "Chat Details"))
 })
 const leaveGroupChat = asyncHandler(async (req, res) => {
     const {chatId} = req.params
-    const chat = await Chat.findById(chatId)
-    if(!chat){
+    const groupChat = await Chat.findOne({_id: new mongoose.Types.ObjectId(chatId), isGroupChat:trues})
+    if(!groupChat){
         throw new ApiError(404,"No Such Chat found")
     }
-    if(!chat.participants.contains(new mongoose.Types.ObjectId(req.user._id))){
+    if(!groupChat.participants.contains(new mongoose.Types.ObjectId(req.user._id))){
         throw new ApiError(403,"You are not a participant of this chat")
     }
-    if(chat.admin.toString() === req.user._id.toString()){
+    if(groupChat.admin.toString() === req.user._id.toString()){
         throw new ApiError(403,"Admin can't leave the chat")
     }
-    chat.participants = chat.participants.filter((participant) => {
+    groupChat.participants = groupChat.participants.filter((participant) => {
         return participant.toString() !== req.user._id.toString()
     })
-    await chat.save()
-    return res.status(200).json(new ApiResponse(200,{}, "You have left the chat"))
+    await groupChat.save()
+    groupChat?.participants?.forEach((participant)=>{ 
+        emitSocketEvent(
+            req,
+            participant._id?.toString(),
+            ChatEventEnum.LEAVE_CHAT_EVENT,
+            groupChat
+        )
+    })
+
+    return res.status(200).json(new ApiResponse(200,groupChat, "You have left the chat"))
 })
 const addNewParticipantInGroupChat = asyncHandler(async(req,res)=>{
-    const {chatId} = req.params
-    const {participant} = req.body
+    const {chatId,participant} = req.params
     if(!participant){
         throw new ApiError(400,"Participant is required")
     }
-    const chat = await Chat.findById(chatId)
-    if(!chat){
-        throw new ApiError(404,"No Such Chat found")
+    const groupChat = await Chat.findOne({_id: new mongoose.Types.ObjectId(chatId),isGroupChat:true})
+    if(!groupChat){
+        throw new ApiError(404,"No Such Group Chat found")
     }
-    if(chat?.participants.contains(new mongoose.Types.ObjectId(participant))){
+    if(groupChat?.participants.contains(new mongoose.Types.ObjectId(participant))){
         throw new ApiError(403,"Participant already exists in the chat")
     }
-    chat.participants.push(participant)
-    await chat.save()
+    if(groupChat.admin.toString() !== req.user._id.toString()){
+        throw new ApiError(403,"You are not authorized to add the participants in the chat")
+    }
+    groupChat.participants.push(participant)
+    await groupChat.save()
+    const payload = await Chat.aggregate([{
+        $match:{
+            _id: new mongoose.Types.ObjectId(chatId)
+        },
+        ...chatCommonAggregation()
+    }])
+    payload?.participants?.forEach((participant)=>{ 
+        emitSocketEvent(req,participant?._id,ChatEventEnum.NEW_CHAT_EVENT,payload)
+    })
+
     return res.status(200).json(new ApiResponse(200,{}, "Participant added to the chat"))  
 })
 
 const removeParticipantFromGroupChat = asyncHandler(async (req, res) => {
-    const {chatId,userId} = req.params
-    if(!userId){
+    const {chatId,participantId} = req.params
+    if(!participantId){
         throw new ApiError(400,"User id is required")
     }
-    const chat = await Chat.findById(chatId)
+    const chat = await Chat.findOne({_id: new mongoose.Types.ObjectId(chatId),isGroupChat:true
+    })
     if(!chat){
-        throw new ApiError(404,"No Such Chat found")
+        throw new ApiError(404,"No Such Group Chat found")
     }
-    if(!chat.participants.contains(new mongoose.Types.ObjectId(userId))){
+    if(!chat.participants.contains(new mongoose.Types.ObjectId(participantId))){
         throw new ApiError(403,"No Such participant found the group")
     }
     if(chat.admin.toString() !== req.user._id.toString()){
         throw new ApiError(403,"You are not authorized to remove the participants from the group")
     }
     chat.participants = chat.participants.filter((participant) => {
-        return participant.toString() !== userId.toString()
+        return participant.toString() !== participantId.toString()
     })
     await chat.save()
-    return res.status(200).json(new ApiResponse(200,{}, "Participant removed the chat"))
+    const payload = await Chat.aggregate([
+        {
+            $match:{
+                _id: new mongoose.Types.ObjectId(chatId)
+            },
+            ...chatCommonAggregation()
+        }
+    ])
+    emitSocketEvent(req, participantId, ChatEventEnum.LEAVE_CHAT_EVENT, payload[0]);
+    return res.status(200).json(new ApiResponse(200,payload[0], "Participant removed the chat"))
 })
 const renameGroupChat = asyncHandler(async (req, res) => {
     const {chatId} = req.params
@@ -335,17 +410,53 @@ const renameGroupChat = asyncHandler(async (req, res) => {
     if(!name){
         throw new ApiError(400,"Name is required")
     }
-    const chat = await Chat.findById(chatId)
-    if(!chat){
-        throw new ApiError(404,"No Such Chat found")
+    const groupChat = await Chat.findOne({_id:new mongoose.Types.ObjectId(chatId),
+        isGroupChat:true
+    })
+    if(!groupChat){
+        throw new ApiError(404,"No Such Group Chat found")
     }
-    if(chat.admin.toString() !== req.user._id.toString()){
+    if(groupChat.admin.toString() !== req.user._id.toString()){
         throw new ApiError(403,"You are not authorized to rename the chat")
     }
-    chat.name = name
-    await chat.save()
-    return res.status(200).json(new ApiResponse(200,{}, "Chat renamed successfully"))
+    groupChat.name = name
+    await groupChat.save()
+
+    const chat = await Chat.aggregate([{
+        $match:{
+            _id: new mongoose.Types.ObjectId(chatId)
+        },
+        ...chatCommonAggregation()
+    }])
+
+    const payload = chat[0]
+    if(!payload){
+        throw new ApiError(500,"Something went wrong while updating")
+    }
+
+    payload?.participants?.forEach((participant)=>{
+        if(participant.toString() === req.user._id.toString()) return;
+        emitSocketEvent(
+            req,
+            participant._id?.toString(),
+            ChatEventEnum.UPDATE_GROUP_NAME_EVENT,
+            payload
+        )
+    })
+    return res.status(200).json(new ApiResponse(200,payload, "Chat renamed successfully"))
 })
 
 
-
+export {
+    addNewParticipantInGroupChat,
+    createAGroupChat,
+    createOrGetAOneOnOneChat,
+    deleteGroupChat,
+    deleteOneOnOneChat,
+    getAllChats,
+    getGroupChatDetails,
+    leaveGroupChat,
+    removeParticipantFromGroupChat,
+    renameGroupChat,
+    searchAvailableUsers,
+  };

@@ -6,3 +6,9 @@ export const removeLocalFile = (localPath) => {
       }
     });
   };
+
+  export const getStaticFilePath = (req, fileName) => {
+    return `${req.protocol}://${req.get("host")}/images/${fileName}`;
+  };
+
+  
