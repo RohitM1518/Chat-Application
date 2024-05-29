@@ -14,7 +14,6 @@ router.route("/group").post(createAGroupChat)
 router.route("/group/:chatId")
 .patch(mongoIdPathVariableValidator("chatId"),renameGroupChat)
 .delete(mongoIdPathVariableValidator("chatId"), deleteGroupChat)
-
 router.route("/group/:chatId/:participantId").post(mongoIdPathVariableValidator("chatId"),mongoIdPathVariableValidator("participantId"),addNewParticipantInGroupChat)
 .delete(mongoIdPathVariableValidator("chatId"),mongoIdPathVariableValidator("participantId"), removeParticipantFromGroupChat)
 router

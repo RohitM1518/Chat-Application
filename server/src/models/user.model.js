@@ -30,22 +30,10 @@ const userSchema = new mongoose.Schema(
             type:Boolean,
             default: false
         },
-        role:{
-            type: String,
-            enum: ["user", "admin"],
-            default:"user"
-        },
         contactNo:{
             type:Number,
             required:true
         },
-
-        formsSubmitted:[
-            {
-                type: mongoose.Schema.Types.ObjectId, 
-                ref: "FeedbackForm"
-            }
-        ]
     },{timestamps:true})
 
 //pre is a middleware which will run before saving the data in database in mongoose
