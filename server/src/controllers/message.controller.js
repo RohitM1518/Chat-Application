@@ -1,10 +1,10 @@
-import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/AsyncHandler";
-import { ChatMessage } from "../models/message.model";
-import { Chat } from "../models/chat.model";
-import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
+import { ChatMessage } from "../models/message.model.js";
+import { Chat } from "../models/chat.model.js";
+import { ApiError } from "../utils/ApiError.js";
 import mongoose from "mongoose";
-import { removeLocalFile } from "../utils/helper";
+import { removeLocalFile } from "../utils/helper.js";
 
 const chatMessageCommonAggregation = () => {
     return [

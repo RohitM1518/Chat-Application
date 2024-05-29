@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware";
-import { deleteMessage, getAllMessages, sendMessage } from "../controllers/message.controller";
-import { mongoIdPathVariableValidator } from "../validators/mongodb.validator";
-import { upload } from "../middlewares/multer.middleware";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { deleteMessage, getAllMessages, sendMessage } from "../controllers/message.controller.js";
+import { mongoIdPathVariableValidator } from "../validators/mongodb.validator.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router()
 router.use(verifyJWT)

@@ -1,14 +1,25 @@
 import  express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser"
+import { initializeSocketIO } from "./socket/index.js";
 
 
 const app = express();
+const httpServer = createServer(app);
+
+// Assuming your front-end is running on a different port like 3000
+const io = new Server(httpServer, {
+  pingTimeout: 60000,
+  cors: {
+    origin: 'http://localhost:5317',
+    credentials: true,
+  },
+});
 app.use(cors({
     origin: 'http://localhost:5173', // Allow requests from your front-end origin
     credentials: true, // Allow requests with credentials (e.g., cookies, auth tokens)
 }));
-
+app.set("io",io)
 //use method used whenever we use middleware, configuration
 app.use(express.json({
     limit:"16kb"
@@ -22,7 +33,13 @@ app.use(cookieParser())
 
 //import routes
 import userRoutes from './routes/user.route.js'
+import messageRoutes from './routes/message.route.js'
+import chatRoutes from './routes/chat.route.js'
 
 app.use('/user',userRoutes)
+app.use('/message',messageRoutes)
+app.use('/chat',chatRoutes)
+
+initializeSocketIO(io);
 
 export {app}
