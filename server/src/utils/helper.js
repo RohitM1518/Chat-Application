@@ -1,3 +1,5 @@
+import fs from 'fs'
+
 export const removeLocalFile = (localPath) => {
     fs.unlink(localPath, (err) => {
       if (err) console.log("Error while removing local files: ", err);
@@ -11,4 +13,7 @@ export const removeLocalFile = (localPath) => {
     return `${req.protocol}://${req.get("host")}/images/${fileName}`;
   };
 
+  export const getLocalPath = (fileName) => {
+    return `public/images/${fileName}`;
+  };
   

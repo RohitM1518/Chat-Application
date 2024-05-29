@@ -5,6 +5,8 @@ import { Chat } from "../models/chat.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import mongoose from "mongoose";
 import { removeLocalFile } from "../utils/helper.js";
+import { getStaticFilePath } from "../utils/helper.js";
+import { getLocalPath } from "../utils/helper.js";
 
 const chatMessageCommonAggregation = () => {
     return [
@@ -41,10 +43,20 @@ const getAllMessages = asyncHandler(async (req, res) => {
     if (chat?.participants?.indexOf(req.user._id) === -1) {
         throw new ApiError(401, "User is not part of the group")
     }
-    const messages = await ChatMessage.find({ chat: chatId })
-        .sort({ createdAt: -1 })
-        .aggregate(chatMessageCommonAggregation())
-        .exec();
+    const messages = await ChatMessage.aggregate([
+        {   
+            $match:{
+             chat: new mongoose.Types.ObjectId(chatId)
+             }
+        },
+        {
+            $sort:{
+                createdAt:-1
+            }
+        },
+        ...chatMessageCommonAggregation()
+    ])
+
 
     return res
         .status(200)
@@ -53,6 +65,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
 const sendMessage = asyncHandler(async (req, res) => {
     const { chatId } = req.params;
     const { content } = req.body;
+
     if (!content && !req?.files?.attachments?.length) {
         throw new ApiError(400, "Content or attachments are required")
     }
@@ -77,7 +90,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         chat: chatId,
     });
 
-    const updateChat = await Chat.findByIdAndUpdate(chatId, {
+    await Chat.findByIdAndUpdate(chatId, {
         $set: {
             lastMessage: message._id
         }
@@ -87,10 +100,13 @@ const sendMessage = asyncHandler(async (req, res) => {
         {
             $match: { chat: new mongoose.Types.ObjectId(chatId) }
         },
+        {
+            $sort: { createdAt: -1 }
+        },
         ...chatMessageCommonAggregation()
     ])
 
-    const receivedMessage = message[0]
+    const receivedMessage = messages[0]
 
     if (!receivedMessage) {
         throw new ApiError(500, "Internal server error");
