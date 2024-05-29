@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { addNewParticipantInGroupChat, createAGroupChat, createOrGetAOneOnOneChat, deleteGroupChat, getAllChats, removeParticipantFromGroupChat, renameGroupChat, searchAvailableUsers } from "../controllers/chat.controller.js";
+import { addNewParticipantInGroupChat, createAGroupChat, createOrGetAOneOnOneChat, deleteGroupChat, deleteOneOnOneChat, getAllChats, leaveGroupChat, removeParticipantFromGroupChat, renameGroupChat, searchAvailableUsers } from "../controllers/chat.controller.js";
 import { mongoIdPathVariableValidator } from "../validators/mongodb.validator.js";
 
 const router = Router()
@@ -19,11 +19,11 @@ router.route("/group/:chatId/:participantId").post(mongoIdPathVariableValidator(
 .delete(mongoIdPathVariableValidator("chatId"),mongoIdPathVariableValidator("participantId"), removeParticipantFromGroupChat)
 router
   .route("/leave/group/:chatId")
-  .delete(mongoIdPathVariableValidator("chatId"), validate, leaveGroupChat);
+  .delete(mongoIdPathVariableValidator("chatId"),leaveGroupChat);
 
 router
   .route("/remove/:chatId")
-  .delete(mongoIdPathVariableValidator("chatId"), validate, deleteOneOnOneChat);
+  .delete(mongoIdPathVariableValidator("chatId"),deleteOneOnOneChat);
 
 export default router;
 
