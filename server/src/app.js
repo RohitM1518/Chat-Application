@@ -12,7 +12,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   pingTimeout: 60000,
   cors: {
-    origin: 'http://localhost:5317',
+    origin: 'http://localhost:5173',
     credentials: true,
   },
 });
@@ -43,4 +43,4 @@ app.use('/chat',chatRoutes)
 
 initializeSocketIO(io);
 
-export {app}
+export {app,httpServer,io}

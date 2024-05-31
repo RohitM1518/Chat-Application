@@ -48,25 +48,25 @@ const initializeSocketIO = (io) => {
         try {
             // parse the cookies from the handshake headers (This is only possible if client has `withCredentials: true`)
             const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
-
             let token = cookies?.accessToken; // get the accessToken
-
+            
             if (!token) {
                 // If there is no access token in cookies. Check inside the handshake auth
                 token = socket.handshake.auth?.token;
             }
+            console.log("Hwy user",token)
 
             if (!token) {
                 // Token is required for the socket to work
                 throw new ApiError(401, "Un-authorized handshake. Token is missing");
             }
-
-            const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // decode the token
-
+            console.log("baeb",token)
+            const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // decode the token
+            console.log("decoded token",decodedToken)
             const user = await User.findById(decodedToken?._id).select(
                 "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
             );
-
+            console.log("user",user)
             // retrieve the user
             if (!user) {
                 throw new ApiError(401, "Un-authorized handshake. Token is invalid");
@@ -100,14 +100,6 @@ const initializeSocketIO = (io) => {
     });
 };
 
-/**
- *
- * @param {import("express").Request} req - Request object to access the `io` instance set at the entry point
- * @param {string} roomId - Room where the event should be emitted
- * @param {AvailableChatEvents[0]} event - Event that should be emitted
- * @param {any} payload - Data that should be sent when emitting the event
- * @description Utility function responsible to abstract the logic of socket emission via the io instance
- */
 const emitSocketEvent = (req, roomId, event, payload) => {
     req.app.get("io").in(roomId).emit(event, payload);
 };
