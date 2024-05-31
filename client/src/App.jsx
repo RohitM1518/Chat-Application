@@ -12,7 +12,7 @@ function App() {
   const refreshToken = useSelector(state => state?.user?.currentUser?.refreshToken)
   const accessToken = useSelector(state => state?.user?.accessToken)
   const {socket} = useSocketContext();
-  console.log("socket",socket)
+  // console.log("socket",socket)
   useEffect(()=>{
     if(socket){
       socket.on('connect',()=>{

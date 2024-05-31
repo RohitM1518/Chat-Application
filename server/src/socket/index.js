@@ -54,19 +54,19 @@ const initializeSocketIO = (io) => {
                 // If there is no access token in cookies. Check inside the handshake auth
                 token = socket.handshake.auth?.token;
             }
-            console.log("Hwy user",token)
+            // console.log("Hwy user",token)
 
             if (!token) {
                 // Token is required for the socket to work
                 throw new ApiError(401, "Un-authorized handshake. Token is missing");
             }
-            console.log("baeb",token)
-            const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // decode the token
-            console.log("decoded token",decodedToken)
+            // console.log("baeb",token)
+            const decodedToken =jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY); // decode the token
+            // console.log("decoded token",decodedToken)
             const user = await User.findById(decodedToken?._id).select(
                 "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
             );
-            console.log("user",user)
+            // console.log("user",user)
             // retrieve the user
             if (!user) {
                 throw new ApiError(401, "Un-authorized handshake. Token is invalid");
@@ -92,6 +92,7 @@ const initializeSocketIO = (io) => {
                 }
             });
         } catch (error) {
+            console.log(error)
             socket.emit(
                 ChatEventEnum.SOCKET_ERROR_EVENT,
                 error?.message || "Something went wrong while connecting to the socket."

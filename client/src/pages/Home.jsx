@@ -9,7 +9,7 @@ const Home = () => {
     const isLogin = useSelector(state => state?.user?.authStatus)
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow flex flex-col items-center justify-center bg-gradient-to-r from-cyan-400 via-pink-400 to-red-700 text-white">
+      <main className="flex-grow flex flex-col items-center justify-center bg-gradient-to-r from-cyan-600 via-pink-400 to-red-700 text-white">
         <h1 className="text-5xl font-bold mb-4">Welcome to ChatApp</h1>
         <p className="text-xl mb-8">Connect with your friends and family instantly</p>
         <div className="flex space-x-4">
@@ -18,6 +18,7 @@ const Home = () => {
             color="primary"
             startIcon={<Chat />}
             className="bg-purple-700 hover:bg-purple-800"
+            onClick={()=>navigate("/chats")}
           >
             Start Chatting
           </Button>}

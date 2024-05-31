@@ -29,10 +29,11 @@ const Header = ({ userName, userImage }) => {
     };
 
     return (
-        <div className="flex items-center justify-between bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500">
+        <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500">
             {isLogin && (
-                    <div className="relative inline-block ml-4">
+                    <div className="relative flex items-center gap-4 ml-4 ">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
+                        <Typography variant='h5' sx={{color:'white'}}>{user?.fullName}</Typography>
                     </div>
                 )}
             <Toolbar className="w-full flex items-center">

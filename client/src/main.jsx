@@ -6,7 +6,7 @@ import {createBrowserRouter,RouterProvider} from 'react-router-dom'
 import { store } from './redux/store.js'
 import { persistor } from './redux/store.js'
 import { Provider } from 'react-redux'
-import {Home,SignUp,SignIn} from './pages/index.js'
+import {Home,SignUp,SignIn, Main} from './pages/index.js'
 import { PersistGate } from 'redux-persist/integration/react'
 import { SocketContextProvider } from './context/SocketContext.jsx'
 
@@ -25,6 +25,10 @@ const router = createBrowserRouter([{
     {
       path: '/signin',
       element: <SignIn />
+    },
+    {
+      path: '/chats',
+      element: <Main />
     },
   ]
 }])
