@@ -118,16 +118,16 @@ const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
         {
             $match: {
                 participants: {
-                    $all: [req.user._id, receiverId]
+                    $all: [req.user._id, new mongoose.Types.ObjectId(receiverId)]
                 },
                 isGroupChat: false
             }
         },
         ...chatCommonAggregation()
     ]);
-    // console.log("Hi")
-
+    
     if (chat.length) {
+        // console.log("Chat found",chat[0])
         return res.status(200).json(new ApiResponse(200, chat[0], "Chat Found"))
     }
 

@@ -7,6 +7,8 @@ import mongoose from "mongoose";
 import { removeLocalFile } from "../utils/helper.js";
 import { getStaticFilePath } from "../utils/helper.js";
 import { getLocalPath } from "../utils/helper.js";
+import { emitSocketEvent } from "../socket/index.js";
+import { ChatEventEnum } from "../constants.js";
 
 const chatMessageCommonAggregation = () => {
     return [
@@ -19,7 +21,7 @@ const chatMessageCommonAggregation = () => {
                 pipeline: [
                     {
                         $project: {
-                            username: 1,
+                            fullName: 1,
                             avatar: 1,
                             email: 1,
                         },
@@ -51,7 +53,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
         },
         {
             $sort:{
-                createdAt:-1
+                createdAt:1
             }
         },
         ...chatMessageCommonAggregation()
@@ -128,7 +130,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
+        .json(new ApiResponse(201, messages, "Message saved successfully"));
 
 
 })
