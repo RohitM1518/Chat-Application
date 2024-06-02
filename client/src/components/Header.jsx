@@ -12,6 +12,9 @@ const Header = ({ userName, userImage }) => {
     const accessToken = useSelector(state => state?.user?.accessToken);
     const isLogin = useSelector(state => state?.user?.authStatus);
     const user = useSelector(state => state.user.currentUser);
+    console.log(user)
+    console.log(isLogin)
+    console.log(accessToken)
 
     const handleLogout = async () => {
         try {

@@ -21,29 +21,30 @@ function App() {
     }
   },[])
 
-useEffect(()=>{
-  const refreshTheToken = async () => {
-    try {
-      const res = await axios.post('http://localhost:8000/user/refresh-token',
-        { refreshToken: refreshToken },
-        {
-          withCredentials: true,
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        }
-      );
-      console.log(res.data.data.data)
-      dispatch(loginSuccess(res.data.data.data))
+// useEffect(()=>{
+//   const refreshTheToken = async () => {
+//     try {
+//       if(refreshTheToken && accessToken){
+//       const res = await axios.post('http://localhost:8000/user/refresh-token',
+//         { refreshToken: refreshToken },
+//         {
+//           withCredentials: true,
+//           headers: {
+//             'Authorization': `Bearer ${accessToken}`
+//           }
+//         }
+//       );
+//       console.log(res.data.data.data)
+//       dispatch(loginSuccess(res.data.data.data))
+//     }
+//     } catch (error) {
+//       dispatch(logout())
+//       throw error
+//     }
 
-    } catch (error) {
-      // dispatch(logout())
-      throw error
-    }
-
-  }
-  refreshTheToken();
-},[])
+//   }
+//   refreshTheToken();
+// },[])
   return (
     <div className=' relative'>
    <Header />

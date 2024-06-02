@@ -3,18 +3,25 @@ import { useChatContext } from '../context/ChatContext'
 import { Try } from '@mui/icons-material'
 import axios from 'axios'
 import { errorParser } from '../utils/errorParser'
+import { useSelector } from 'react-redux'
+import { useMessageContext } from '../context/MessageContext'
 
 const MessageInput = () => {
-  const {chat,setChat}= useChatContext()
+  const {chat}= useChatContext()
+  const {setMessages} = useMessageContext()
+  const accessToken = useSelector(state => state?.user?.accessToken)
   const[content,setContent] = useState('')
-  const sendMessage=async()=>{
+  const sendMessage=async(e)=>{
+    e.preventDefault()
     try {
       const res = await axios.post(`http://localhost:8000/message/${chat?._id}`,{content},{
         withCredentials:true,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
       })
       setContent('')
-      // console.log(res.data.data)
-      setChat(res?.data?.data)
+      setMessages(res?.data?.data)
       // const messages = await axios.get('http://localhost:8000/chat')
       // console.log(res)
     } catch (error) {
@@ -23,9 +30,11 @@ const MessageInput = () => {
     }
   }
   return (
-    <div className='flex gap-2'>
+    <div >
+        <form onSubmit={sendMessage} className='flex gap-2'>
         <input type="text" placeholder="Type here" className="input input-bordered input-info w-full sticky" value={content} onChange={(e)=>setContent(e.target.value)}/>
-        <button className="btn glass text-white" onClick={sendMessage}>Send</button>
+        <button className="btn glass text-white" >Send</button>
+        </form>
     </div>
   )
 }

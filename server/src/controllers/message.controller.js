@@ -103,7 +103,7 @@ const sendMessage = asyncHandler(async (req, res) => {
             $match: { chat: new mongoose.Types.ObjectId(chatId) }
         },
         {
-            $sort: { createdAt: -1 }
+            $sort: { createdAt: 1 }
         },
         ...chatMessageCommonAggregation()
     ])
