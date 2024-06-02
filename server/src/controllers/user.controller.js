@@ -33,7 +33,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     const { fullName, email, password, contactNo } = req.body
-
+    console.log("Full Name ", fullName)
     console.log("password ", password)
     if ([fullName, email, password, contactNo].some((feild) => feild?.trim() === "")) {
         throw new ApiError(400, "All fields are required")
@@ -69,19 +69,19 @@ const registerUser = asyncHandler(async (req, res) => {
     const createdUser = await User.findById(user._id).select(
         "-password " //This means we are not sending the password and refreshToken to the frontend
     )
-
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering")
     }
-
+    
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(createdUser._id)
-
+    
     const options = {
         httpOnly: true, //This means that the cookie can only be accessed by the server
         secure: false //This means a cookie can only be accessed by the server if the request is being sent over HTTPS
         //TODO: For production set it to true
     }
-
+    
+    console.log("1")
 
     createdUser.accessToken = accessToken;
     return res.status(201)

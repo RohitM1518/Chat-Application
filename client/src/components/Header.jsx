@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/userSlice';
 import axios from 'axios';
 
-const Header = ({ userName, userImage }) => {
+const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accessToken = useSelector(state => state?.user?.accessToken);
@@ -32,11 +32,11 @@ const Header = ({ userName, userImage }) => {
     };
 
     return (
-        <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500">
+        <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10">
             {isLogin && (
                     <div className="relative flex items-center gap-4 ml-4 ">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
-                        <Typography variant='h5' sx={{color:'white'}}>{user?.fullName}</Typography>
+                        <h5 className=' text-white text-lg'>{user?.fullName}</h5>
                     </div>
                 )}
             <Toolbar className="w-full flex items-center">

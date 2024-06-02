@@ -176,25 +176,26 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     if (!participants) {
         throw new ApiError(400, "Participants are required")
     }
-
-    if (participants.includes(req.user._id.toString())) {
-        throw new ApiError(
-            400,
-            "Participants array should not contain the group creator"
-        );
-    }
+    console.log(name,participants)
+    // if (participants.includes(req.user._id.toString())) {
+    //     throw new ApiError(
+    //         400,
+    //         "Participants array should not contain the group creator"
+    //     );
+    // }
     const members = [...new Set([...participants, req.user._id])];
     if (members.length < 3) {
         throw new ApiError(400, "Atleast Three members needed in the group ")
     }
-
+    console.log("members",members)
     const groupChat = await Chat.create({
         name,
         isGroupChat: true,
         participants: members,
         admin: req.user._id,
     });
-
+    console.log("groupchat",groupChat)
+    
     const chat = await Chat.aggregate([
         {
             $match: {
@@ -203,7 +204,7 @@ const createAGroupChat = asyncHandler(async (req, res) => {
         },
         ...chatCommonAggregation(),
     ]);
-
+    console.log("chat",chat)
     const payload = chat[0]
     if (!payload) {
         throw new ApiError(500, "Something went wrong while creating the group chat")
@@ -281,14 +282,15 @@ const deleteOneOnOneChat = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, {}, "Chat Deleted Successfully"))
 })
-const getAllChats = asyncHandler(async (req, res) => {
+const getGroupChats = asyncHandler(async (req, res) => {
     const chats = await Chat.aggregate(
         [
             {
                 $match: {
                     participants: {
                         $elemMatch: { $eq: req.user._id }
-                    }
+                    },
+                    isGroupChat:true
                 }
             },
             {
@@ -470,7 +472,7 @@ export {
     createOrGetAOneOnOneChat,
     deleteGroupChat,
     deleteOneOnOneChat,
-    getAllChats,
+    getGroupChats,
     getGroupChatDetails,
     leaveGroupChat,
     removeParticipantFromGroupChat,

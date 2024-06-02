@@ -1,6 +1,6 @@
-import UserList from "./UserList";
+import SideBar from "./SideBar";
 import NoChatSelected from "../pages/NoChatSelected";
 export {
-    UserList,
+    SideBar,
     NoChatSelected
 }

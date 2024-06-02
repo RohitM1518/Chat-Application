@@ -4,16 +4,17 @@ import { styled } from '@mui/system';
 import { errorParser } from '../utils/errorParser';
 import { loginSuccess } from '../redux/userSlice';
 import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
 
 const InputField = styled(TextField)({
   marginBottom: '1rem',
 });
 
-const SignUp= () => {
-const [error,setError] = useState('')
-const navigate = useNavigate()
+const SignUp = () => {
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
@@ -31,19 +32,27 @@ const navigate = useNavigate()
     setFormData({ ...formData, avatar: e.target.files[0] });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('')
     // Handle form submission
     try {
-        const res = await axios.post('http://localhost:8000/user/register', formData)
-            console.log(res.data.data.data)
-            dispatch(loginSuccess(res.data.data.data))
-            navigate('/')
-        
+      const formDataToSend = new FormData();
+      formDataToSend.append('fullName', formData.fullname);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('contactNo', formData.contactNo);
+      formDataToSend.append('avatar', formData.avatar);
+      console.log(formData.avatar)
+      const res = await axios.post('http://localhost:8000/user/register', formDataToSend)
+      console.log(res.data.data.data)
+      dispatch(loginSuccess(res.data.data.data))
+      navigate('/')
+
     } catch (error) {
-        const errorMsg = errorParser(error)
-        setError(errorMsg)
+      console.log(error)
+      const errorMsg = errorParser(error)
+      setError(errorMsg)
     }
     console.log(formData);
   };
@@ -61,7 +70,7 @@ const navigate = useNavigate()
             name="fullname"
             value={formData.fullname}
             onChange={handleChange}
-            sx={{color:'white'}}
+            sx={{ color: 'white' }}
           />
           <InputField
             label="Email"
@@ -97,11 +106,12 @@ const navigate = useNavigate()
             />
             <Button variant="outlined" component="label">
               Upload Avatar
-             <Input
+              <Input
                 type="file"
                 hidden
                 onChange={handleAvatarChange}
                 style={{ background: '' }}
+                className='file-input file-input-ghost w-full max-w-xs'
               />
             </Button>
           </div>

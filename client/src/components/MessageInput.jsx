@@ -5,12 +5,22 @@ import axios from 'axios'
 import { errorParser } from '../utils/errorParser'
 import { useSelector } from 'react-redux'
 import { useMessageContext } from '../context/MessageContext'
+import { useSocketContext } from '../context/SocketContext'
 
 const MessageInput = () => {
   const {chat}= useChatContext()
-  const {setMessages} = useMessageContext()
+  const {messages,setMessages} = useMessageContext()
   const accessToken = useSelector(state => state?.user?.accessToken)
   const[content,setContent] = useState('')
+  const {socket} = useSocketContext()
+
+  if(socket){
+  socket.on('messageReceived',(messagesRes)=>{
+    console.log("new Message")
+    setMessages(messagesRes);
+    console.log(messages)
+  })
+  }
   const sendMessage=async(e)=>{
     e.preventDefault()
     try {
@@ -21,6 +31,7 @@ const MessageInput = () => {
         }
       })
       setContent('')
+
       setMessages(res?.data?.data)
       // const messages = await axios.get('http://localhost:8000/chat')
       // console.log(res)
@@ -30,7 +41,7 @@ const MessageInput = () => {
     }
   }
   return (
-    <div >
+    <div className=''>
         <form onSubmit={sendMessage} className='flex gap-2'>
         <input type="text" placeholder="Type here" className="input input-bordered input-info w-full sticky" value={content} onChange={(e)=>setContent(e.target.value)}/>
         <button className="btn glass text-white" >Send</button>

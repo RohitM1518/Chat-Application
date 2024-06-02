@@ -22,7 +22,8 @@ export const SocketContextProvider=({children})=>{
              const socket = io("http://localhost:8000",{
                  auth:{
                      token: accessToken 
-                 }
+                 },
+                 withCredentials:true
              })
              setSocket(socket)
              return ()=>socket.close();

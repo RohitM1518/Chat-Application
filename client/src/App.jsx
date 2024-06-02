@@ -19,7 +19,7 @@ function App() {
         console.log('Connected to socket server')
       })
     }
-  },[])
+  },[socket])
 
 // useEffect(()=>{
 //   const refreshTheToken = async () => {

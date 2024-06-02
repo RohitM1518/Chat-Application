@@ -64,6 +64,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, messages, "Messages found successfully"))
 })
+
 const sendMessage = asyncHandler(async (req, res) => {
     const { chatId } = req.params;
     const { content } = req.body;
@@ -118,13 +119,13 @@ const sendMessage = asyncHandler(async (req, res) => {
         // here the chat is the raw instance of the chat in which participants is the array of object ids of users
         // avoid emitting event to the user who is sending the message
         if (participantObjectId.toString() === req.user._id.toString()) return;
-
+        console.log("New message",participantObjectId)
         // emit the receive message event to the other participants with received message as the payload
         emitSocketEvent(
             req,
             participantObjectId.toString(),
             ChatEventEnum.MESSAGE_RECEIVED_EVENT,
-            receivedMessage
+            messages
         );
     });
 
@@ -143,12 +144,19 @@ const deleteMessage = asyncHandler(async (req, res) => {
     if (chat.participants.indexOf(req.user._id) === -1) {
         throw new ApiError(401, "User is not part of the group")
     }
+   
     const message = await ChatMessage.findOne({ _id: new mongoose.Types.ObjectId(messageId), chat: chat._id })
+    
     if (!message) {
         throw new ApiError(400, "No such message found")
     }
+    if(chat.isGroupChat){
+        if(chat.admin.toString != req.user._id.toString() || message.sender.toString() !== req.user._id.toString()){
+            throw new ApiError("Only Admin or sender can delete the message")
+        }
+    }
     if (message.sender.toString() !== req.user._id.toString()) {
-        throw new ApiError(401, "You are not authorised to delete the message as you are not the sender")
+        throw new ApiError(401, "Only sender Can delete the message")
     }
     if (message.attachments.length > 0) {
         //If the message is attachment  remove the attachments from the server

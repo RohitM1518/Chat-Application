@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { addNewParticipantInGroupChat, createAGroupChat, createOrGetAOneOnOneChat, deleteGroupChat, deleteOneOnOneChat, getAllChats, leaveGroupChat, removeParticipantFromGroupChat, renameGroupChat, searchAvailableUsers } from "../controllers/chat.controller.js";
+import { addNewParticipantInGroupChat, createAGroupChat, createOrGetAOneOnOneChat, deleteGroupChat, deleteOneOnOneChat, getGroupChats, leaveGroupChat, removeParticipantFromGroupChat, renameGroupChat, searchAvailableUsers } from "../controllers/chat.controller.js";
 import { mongoIdPathVariableValidator } from "../validators/mongodb.validator.js";
 
 const router = Router()
 
 router.use(verifyJWT)
 
-router.route("/").get(getAllChats)
+router.route("/getgroupchats").get(getGroupChats)
 router.route("/users").get(searchAvailableUsers)
 router.route("/c/:receiverId").post(mongoIdPathVariableValidator("receiverId"),createOrGetAOneOnOneChat)
 router.route("/group").post(createAGroupChat)
