@@ -6,13 +6,17 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { ChatContextProvider } from '../context/ChatContext'
 import { MessageContextProvider } from '../context/MessageContext'
+import { ChatModificationProvider } from '../context/ChatModificationContext'
+import { AlertContextProvider } from '../context/AlertContext'
 
 const ChatPage = () => {
 
   return (
     <div className=' w-full flex'>
+      <ChatModificationProvider>
       <ChatContextProvider>
         <MessageContextProvider>
+      <AlertContextProvider>
           <div className='flex h-screen'>
             <div>
               <SideBar />
@@ -21,8 +25,10 @@ const ChatPage = () => {
           <div className='w-full'>
             <Chat />
           </div>
+      </AlertContextProvider>
         </MessageContextProvider>
       </ChatContextProvider>
+      </ChatModificationProvider>
     </div>
   )
 }

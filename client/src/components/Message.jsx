@@ -31,7 +31,7 @@ const Message = ({ message }) => {
             
         }
     }
-    const formattedDate = format(new Date(message?.createdAt), 'PPpp');
+    const formattedDate = format(new Date(message?.createdAt), 'Pp');
 
     return (
         <div className="relative group">
