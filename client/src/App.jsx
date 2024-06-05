@@ -6,6 +6,7 @@ import { useDispatch,useSelector } from 'react-redux'
 import { loginSuccess,logout } from './redux/userSlice'
 import axios from 'axios'
 import { useSocketContext } from './context/SocketContext'
+import {persistor} from './redux/store.js'
 
 function App() {
   const dispatch = useDispatch()
@@ -13,6 +14,7 @@ function App() {
   const accessToken = useSelector(state => state?.user?.accessToken)
   const {socket} = useSocketContext();
   // console.log("socket",socket)
+  // persistor.purge();
   useEffect(()=>{
     if(socket){
       socket.on('connect',()=>{
