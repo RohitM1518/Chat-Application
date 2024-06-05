@@ -104,7 +104,7 @@ const SideBar = () => {
             </div>
             {showUsers && users && users.map((user) => (
                 <div key={user._id} className="flex gap-2 items-center">
-                    <div className="hover:cursor-pointer hover:translate-x-1 hover:translate-y-1 w-full" onClick={() => { navigate(`/chats/${user._id}`) }}>
+                    <div className="hover:cursor-pointer w-full" onClick={() => { navigate(`/chats/${user._id}`) }}>
                         <User user={user} />
                     </div>
                     {status && <input

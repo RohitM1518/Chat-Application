@@ -31,6 +31,10 @@ const router = createBrowserRouter([{
       element: <ChatPage />
     },
     {
+      path: '/chats/group/:groupid',
+      element: <ChatPage />
+    },
+    {
       path: '/chats',
       element: <NoChatSelected />
     },

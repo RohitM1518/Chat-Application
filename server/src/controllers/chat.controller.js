@@ -25,9 +25,11 @@ const chatCommonAggregation = () => {
                         }
                     }
                 ]
-            },
+            }
+        },
+        {
             $lookup: {
-                from: "chatmessages",
+                from: "messages",
                 localField: "lastMessage",
                 foreignField: "_id",
                 as: "lastMessage",
@@ -54,15 +56,16 @@ const chatCommonAggregation = () => {
                         }
                     }
                 ]
-            },
-
-        }, {
+            }
+        },
+        {
             $addFields: {
                 lastMessage: { $first: "$lastMessage" }
             }
         }
-    ]
+    ];
 }
+
 
 const deleteCascadeChatMessage = async (chatId) => {
     const messages = await ChatMessage.find({
@@ -295,9 +298,26 @@ const getGroupChats = asyncHandler(async (req, res) => {
             },
             {
                 $sort: {
-                    updatedAt: -1
+                    createdAt: 1
                 }
             },
+            // {
+            //     $lookup:{
+            //         from:"users",
+            //         localField:"participants",
+            //         foreignField:"_id",
+            //         as:"participants",
+            //         pipeline:[
+            //             {
+            //                 $project:{
+            //                     password:0,
+            //                     refreshToken:0
+            //                 }
+            //             }
+            //         ]
+
+            //     }
+            // },
             ...chatCommonAggregation()
         ]
     )

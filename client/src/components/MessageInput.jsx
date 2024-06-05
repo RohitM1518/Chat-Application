@@ -24,6 +24,7 @@ const MessageInput = () => {
   const sendMessage=async(e)=>{
     e.preventDefault()
     try {
+      console.log("Chat id",chat._id)
       const res = await axios.post(`http://localhost:8000/message/${chat?._id}`,{content},{
         withCredentials:true,
         headers: {

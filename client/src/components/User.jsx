@@ -9,6 +9,7 @@ const User = ({ user }) => {
   const [lastMessage, setLastMessage] = useState(null)
   const { messages } = useMessageContext()
   // console.log("set messages",setMessages)
+  const currentUser = useSelector(state=>state.user?.currentUser)
   const refreshToken = useSelector(state => state.user?.currentUser?.refreshToken)
   const accessToken = useSelector(state => state.user?.accessToken)
   const [formattedDate, setFormattedDate] = useState('');
@@ -44,9 +45,9 @@ const User = ({ user }) => {
           <h3 className=' text-white text-lg font-semibold block'>{user?.fullName}</h3>
           <p className=' text-white text-sm block'>{formattedDate}</p>
         </div>
-        <div>
-          <h3 className=' text-white text-sm opacity-65'>{lastMessage?.content}</h3>
-        </div>
+        {lastMessage && <div>
+          <h3 className=' text-white text-sm opacity-65'>{lastMessage?.sender?._id == currentUser?._id?"You: ":lastMessage?.sender?.fullName+": "}{lastMessage?.content}</h3>
+        </div>}
       </div>
     </div>
   )

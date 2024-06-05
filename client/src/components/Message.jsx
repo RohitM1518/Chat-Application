@@ -20,7 +20,7 @@ const Message = ({ message }) => {
     }, [message, user]);
     const deleteMessage = async()=>{
         try {
-            const res = await axios.delete(`http://localhost:8000/message/${chat._id}/${message._id}`,{
+            await axios.delete(`http://localhost:8000/message/${chat._id}/${message._id}`,{
                 withCredentials:true,
                 headers:{
                     'Authorization': `Bearer ${accessToken}`

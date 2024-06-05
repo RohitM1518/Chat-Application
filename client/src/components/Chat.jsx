@@ -25,6 +25,7 @@ const Chat = () => {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 });
+                console.log("Chat Msg res",res.data.data)
                 setMessages(res?.data?.data);
             } catch (error) {
                 console.log(error);
