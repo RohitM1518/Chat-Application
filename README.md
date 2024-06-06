@@ -1,5 +1,3 @@
-Here is a sample Readme.md file for the Chat Application:
-
 # Chat Application
 
 ## Overview
@@ -27,7 +25,7 @@ To run the application, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/RohitM1518/Chat-Application.git`
 2. Install dependencies: `npm install`
-3. Start the application: `npm start`
+3. Start the application: `npm run dev`
 
 ## Contributing
 
