@@ -61,7 +61,7 @@ const SignUp = () => {
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow flex flex-col items-center justify-center bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 p-4">
         <form onSubmit={handleSubmit} className=" backdrop-blur-2xl p-6 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center text-black">Sign Up</h2>
           <h4 className=' text-center mb-2 text-red-600'>{error}</h4>
           <InputField
             label="Full Name"

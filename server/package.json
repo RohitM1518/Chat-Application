@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "start": "node src/index.js"
   },
   "keywords": [
     "chat",
@@ -16,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "client": "^0.0.1",
     "cloudinary": "^2.2.0",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.6",
@@ -28,6 +30,7 @@
     "mongoose-aggregate-paginate-v2": "^1.0.7",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.1",
+    "prefix": "^1.0.0",
     "socket.io": "^4.7.5"
   }
 }

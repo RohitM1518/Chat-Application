@@ -1,0 +1,16 @@
+{
+    "services": [
+      {
+        "name": "server",
+        "path": "server",
+        "startCommand": "npm start",
+        "buildCommand": "npm install"
+      },
+      {
+        "name": "client",
+        "path": "client",
+        "startCommand": "serve -s build",
+        "buildCommand": "npm install && npm run build"
+      }
+    ]
+  }

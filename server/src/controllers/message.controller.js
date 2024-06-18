@@ -46,14 +46,14 @@ const getAllMessages = asyncHandler(async (req, res) => {
         throw new ApiError(401, "User is not part of the group")
     }
     const messages = await ChatMessage.aggregate([
-        {   
-            $match:{
-             chat: new mongoose.Types.ObjectId(chatId)
-             }
+        {
+            $match: {
+                chat: new mongoose.Types.ObjectId(chatId)
+            }
         },
         {
-            $sort:{
-                createdAt:1
+            $sort: {
+                createdAt: 1
             }
         },
         ...chatMessageCommonAggregation()
@@ -119,7 +119,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         // here the chat is the raw instance of the chat in which participants is the array of object ids of users
         // avoid emitting event to the user who is sending the message
         if (participantObjectId.toString() === req.user._id.toString()) return;
-        console.log("New message",participantObjectId)
+        console.log("New message", participantObjectId)
         // emit the receive message event to the other participants with received message as the payload
         emitSocketEvent(
             req,
@@ -138,20 +138,24 @@ const sendMessage = asyncHandler(async (req, res) => {
 const deleteMessage = asyncHandler(async (req, res) => {
     const { chatId, messageId } = req.params;
     const chat = await Chat.findById(chatId)
+    console.log("1")
     if (!chat) {
         throw new ApiError(400, "No such Chat found")
     }
     if (chat.participants.indexOf(req.user._id) === -1) {
         throw new ApiError(401, "User is not part of the group")
     }
-   
+
+    console.log("2")
     const message = await ChatMessage.findOne({ _id: new mongoose.Types.ObjectId(messageId), chat: chat._id })
-    
+
+    console.log("3")
     if (!message) {
         throw new ApiError(400, "No such message found")
     }
-    if(chat.isGroupChat){
-        if(chat.admin.toString != req.user._id.toString() || message.sender.toString() !== req.user._id.toString()){
+    if (chat.isGroupChat) {
+        console.log("4")
+        if (chat.admin.toString() != req.user._id.toString() && message.sender.toString() !== req.user._id.toString()) {
             throw new ApiError("Only Admin or sender can delete the message")
         }
     }

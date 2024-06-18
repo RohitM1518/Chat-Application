@@ -40,7 +40,7 @@ const SignIn = () => {
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow flex flex-col items-center justify-center  bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300  p-4">
         <form onSubmit={handleSubmit} className=" flex flex-col gap-9 backdrop-blur-xl p-6 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold text-center">Sign In</h2>
+          <h2 className="text-2xl font-bold text-center text-black">Sign In</h2>
           <h4 className=' text-center text-red-600'>{error}</h4>
           <TextField
             label="Email"
