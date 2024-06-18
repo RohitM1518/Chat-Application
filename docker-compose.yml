@@ -13,12 +13,13 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MONGO_URI=${mongodb+srv://Rohit:Rohit2580@cluster0.e68foum.mongodb.net}
-      - CORS_ORIGIN=${*}
-      - ACCESS_TOKEN_EXPIRY=${1d}
-      - REFRESH_TOKEN_SECRET_KEY=${sjahjkahjbnwmbeywjkrwhjgkrywkernmbaya3782634873jkhkjhsdjkfhsdkhjksh}
-      - REFRESH_TOKEN_EXPIRY=${10d}
-      - CLOUDINARY_CLOUD_NAME=${dnyboplz0}
-      - CLOUDINARY_API_KEY=${953974564634149}
-      - CLOUDINARY_API_SECRET=${yg5BzdQrma75f6tRVv8v_3s85CU}
-      - ACCESS_TOKEN_SECRET_KEY=${dsjfhajkewuiyuiewrhj32ho78ejrkhw87298edkhkhs7wo3jkh2890hjk3h728yuha7wo3jlh832jk}
+      - MONGO_URI="mongodb+srv://Rohit:Rohit2580@cluster0.e68foum.mongodb.net"
+      - CORS_ORIGIN="*"
+      - PORT="8000"
+      - ACCESS_TOKEN_EXPIRY="1d"
+      - REFRESH_TOKEN_SECRET_KEY="sjahjkahjbnwmbeywjkrwhjgkrywkernmbaya3782634873jkhkjhsdjkfhsdkhjksh"
+      - REFRESH_TOKEN_EXPIRY="10d"
+      - CLOUDINARY_CLOUD_NAME="dnyboplz0"
+      - CLOUDINARY_API_KEY="953974564634149"
+      - CLOUDINARY_API_SECRET="yg5BzdQrma75f6tRVv8v_3s85CU"
+      - ACCESS_TOKEN_SECRET_KEY="dsjfhajkewuiyuiewrhj32ho78ejrkhw87298edkhkhs7wo3jkh2890hjk3h728yuha7wo3jlh832jk"
