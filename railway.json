@@ -1,16 +1,23 @@
 {
-    "services": [
+    "builds": [
       {
-        "name": "server",
-        "path": "server",
-        "startCommand": "npm start",
-        "buildCommand": "npm install"
+        "src": "client/",
+        "use": "docker"
       },
       {
-        "name": "client",
-        "path": "client",
-        "startCommand": "serve -s build",
-        "buildCommand": "npm install && npm run build"
+        "src": "server/",
+        "use": "docker"
+      }
+    ],
+    "deployments": [
+      {
+        "src": "client/",
+        "use": "docker"
+      },
+      {
+        "src": "server/",
+        "use": "docker"
       }
     ]
   }
+  

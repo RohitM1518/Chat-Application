@@ -1,20 +1,20 @@
-# Use the official Node.js image.
+# Use the official Node.js image as the base image
 FROM node:18-alpine
 
-# Create and change to the app directory.
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Copy application dependency manifests to the container image.
-COPY package*.json ./
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
-# Install dependencies.
+# Install dependencies
 RUN npm install
 
-# Copy local code to the container image.
+# Copy the rest of the application
 COPY . .
 
-# Expose the port the app runs on.
+# Expose the port your server is running on
 EXPOSE 8000
 
-# Run the web service on container startup.
-CMD [ "node", "index.js" ]
+# Command to run the server
+CMD ["npm", "run","dev"]
