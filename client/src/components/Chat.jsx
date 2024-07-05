@@ -12,7 +12,9 @@ import { Card } from '@mui/material';
 import { useAlertContext } from '../context/AlertContext';
 import Alert from './Alert';
 
+
 const Chat = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { messages, setMessages } = useMessageContext();
     const { chat } = useChatContext();
     const [users, setUsers] = useState([])
@@ -26,7 +28,7 @@ const Chat = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/chat/users", {
+                const res = await axios.get(`${backendUrl}/chat/users`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
@@ -50,7 +52,7 @@ const Chat = () => {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/message/${chat?._id}`, {
+                const res = await axios.get(`${backendUrl}/message/${chat?._id}`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`

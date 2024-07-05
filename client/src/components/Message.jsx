@@ -8,6 +8,7 @@ import { useMessageContext } from '../context/MessageContext';
 import { Button } from '@mui/material';
 
 const Message = ({ message }) => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [isSender, setIsSender] = useState(false);
     const {chat}= useChatContext()
     const {setMessages} = useMessageContext()
@@ -20,7 +21,7 @@ const Message = ({ message }) => {
     }, [message, user]);
     const deleteMessage = async()=>{
         try {
-            await axios.delete(`http://localhost:8000/message/${chat._id}/${message._id}`,{
+            await axios.delete(`${backendUrl}/message/${chat._id}/${message._id}`,{
                 withCredentials:true,
                 headers:{
                     'Authorization': `Bearer ${accessToken}`

@@ -7,6 +7,8 @@ import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
 
 const SignIn = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const [error,setError]=useState('')
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -25,7 +27,7 @@ const SignIn = () => {
     setError('')
     // Handle form submission
     try {
-        const res = await axios.post('http://localhost:8000/user/login', formData)
+        const res = await axios.post(`${backendUrl}/user/login`, formData)
             console.log(res.data.data.data)
             dispatch(loginSuccess(res.data.data.data))
             navigate('/')

@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useChatContext } from '../context/ChatContext';
 import { useMessageContext } from '../context/MessageContext';
 const GroupList = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const accessToken = useSelector(state => state?.user?.accessToken);
     const [groups,setGroups]=useState([])
     const navigate = useNavigate()
@@ -18,7 +19,7 @@ const GroupList = () => {
         
         const fetchMessages = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/message/${groupid}`, {
+                const res = await axios.get(`${backendUrl}/message/${groupid}`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
@@ -37,7 +38,7 @@ const GroupList = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/chat/getgroupchats", {
+                const res = await axios.get(`${backendUrl}/chat/getgroupchats`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
@@ -57,7 +58,7 @@ const GroupList = () => {
         setChat(group)
         const fetchMessages = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/message/${group._id}`, {
+                const res = await axios.get(`${backendUrl}/message/${group._id}`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`

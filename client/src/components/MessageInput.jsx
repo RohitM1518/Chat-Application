@@ -8,6 +8,8 @@ import { useMessageContext } from '../context/MessageContext'
 import { useSocketContext } from '../context/SocketContext'
 
 const MessageInput = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const {chat}= useChatContext()
   const {messages,setMessages} = useMessageContext()
   const accessToken = useSelector(state => state?.user?.accessToken)
@@ -25,7 +27,7 @@ const MessageInput = () => {
     e.preventDefault()
     try {
       console.log("Chat id",chat._id)
-      const res = await axios.post(`http://localhost:8000/message/${chat?._id}`,{content},{
+      const res = await axios.post(`${backendUrl}/message/${chat?._id}`,{content},{
         withCredentials:true,
         headers: {
           'Authorization': `Bearer ${accessToken}`

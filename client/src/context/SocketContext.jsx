@@ -11,6 +11,7 @@ export const useSocketContext=()=>{
 }
 
 export const SocketContextProvider=({children})=>{
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const accessToken = useSelector(state => state?.user?.accessToken)
     const [socket,setSocket] = useState(null);
     // const [onlineUsers, setOnlineUsers] =useState([])
@@ -19,7 +20,7 @@ export const SocketContextProvider=({children})=>{
         console.log("HI from socket context provider")
        try {
          if(user){
-             const socket = io("http://localhost:8000",{
+             const socket = io(`${backendUrl}`,{
                  auth:{
                      token: accessToken 
                  },

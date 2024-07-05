@@ -7,6 +7,7 @@ import { logout } from '../redux/userSlice';
 import axios from 'axios';
 
 const Header = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accessToken = useSelector(state => state?.user?.accessToken);
@@ -18,7 +19,7 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.get('http://localhost:8000/user/logout', {
+            await axios.get(`${backendUrl}/user/logout`, {
                 withCredentials: true,
                 headers: {
                     "Authorization": `Bearer ${accessToken}`
@@ -34,13 +35,13 @@ const Header = () => {
     return (
         <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10">
             {isLogin && (
-                    <div className="relative flex items-center gap-4 ml-4 ">
+                    <div className="relative flex items-center gap-4 ml-4">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
                         <h5 className=' text-white text-lg'>{user?.fullName}</h5>
                     </div>
                 )}
             <Toolbar className="w-full flex items-center">
-                <div className="flex-1 flex justify-center">
+                <div className="flex-1 flex justify-center hover:cursor-pointer"  onClick={()=>navigate('/')}>
                     <h3 className="text-white font-bold text-2xl">ChatApp</h3>
                 </div>
                 

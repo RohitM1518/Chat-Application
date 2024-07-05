@@ -9,7 +9,7 @@ const Footer = () => {
         <Typography variant="h6" className="text-center md:text-left mb-2 md:mb-0">
           &copy; 2024 ChatApp. All rights reserved.
         </Typography>
-        <div className="flex space-x-4">
+        {/* <div className="flex space-x-4">
           <IconButton color="inherit" href="https://facebook.com">
             <Facebook />
           </IconButton>
@@ -22,7 +22,7 @@ const Footer = () => {
           <IconButton color="inherit" href="https://linkedin.com">
             <LinkedIn />
           </IconButton>
-        </div>
+        </div> */}
       </Toolbar>
     </div>
   );

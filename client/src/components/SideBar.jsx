@@ -9,6 +9,7 @@ import { errorParser } from '../utils/errorParser';
 import GroupList from './GroupList';
 
 const SideBar = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { setChat } = useChatContext();
     const [showUsers, setShowUsers] = useState(true)
     const [status, setStatus] = useState(false);
@@ -23,7 +24,7 @@ const SideBar = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/chat/users", {
+                const res = await axios.get(`${backendUrl}/chat/users`, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
@@ -41,7 +42,7 @@ const SideBar = () => {
         const getChat = async () => {
             try {
                 if (!id) return;
-                const res = await axios.post(`http://localhost:8000/chat/c/${id}`, { refreshToken }, {
+                const res = await axios.post(`${backendUrl}/chat/c/${id}`, { refreshToken }, {
                     withCredentials: true,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`

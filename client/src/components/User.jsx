@@ -12,6 +12,7 @@ import Alert from './Alert'
 import { useAlertContext } from '../context/AlertContext'
 
 const User = ({ user, deleteButton, addButton }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [lastMessage, setLastMessage] = useState(null)
   const { messages } = useMessageContext()
   const { chat } = useChatContext()
@@ -25,7 +26,7 @@ const User = ({ user, deleteButton, addButton }) => {
 
   const removeParticipant = async () => {
     try {
-      await axios.delete(`http://localhost:8000/chat/group/${chat._id}/${user._id}`, {
+      await axios.delete(`${backendUrl}/chat/group/${chat._id}/${user._id}`, {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${accessToken}`
@@ -40,7 +41,7 @@ const User = ({ user, deleteButton, addButton }) => {
   const addParticipant = async () => {
     try {
       console.log(accessToken)
-      await axios.post(`http://localhost:8000/chat/group/${chat._id}/${user._id}`, {}, {
+      await axios.post(`${backendUrl}/chat/group/${chat._id}/${user._id}`, {}, {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${accessToken}`
@@ -54,7 +55,7 @@ const User = ({ user, deleteButton, addButton }) => {
   useEffect(() => {
     try {
       async function getChat() {
-        const res = await axios.post(`http://localhost:8000/chat/c/${user._id}`,
+        const res = await axios.post(`${backendUrl}/chat/c/${user._id}`,
           { refreshToken: refreshToken },
           {
             withCredentials: true,

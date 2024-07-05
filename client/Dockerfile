@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:18-alpine
+FROM node:lts
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -21,6 +21,6 @@ RUN npm install -g serve
 
 # Expose the port that the app runs on
 EXPOSE 5173
-
+ENV VITE_BACKEND_URL=https://chatapplication-server-pf8g.onrender.com
 # Command to serve the React application
 CMD ["npm", "run", "dev"]

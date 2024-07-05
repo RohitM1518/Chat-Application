@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserProfile({ imgSrc  }) {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const userImg = useSelector(state=>state.currentUser?.user?.avatar)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate()
@@ -23,7 +24,7 @@ export default function UserProfile({ imgSrc  }) {
 
   const logoutHandler = async () => {
     try {
-      await axios.get('http://localhost:8000/user/logout', {
+      await axios.get(`${backendUrl}/user/logout`, {
         withCredentials: true,
         headers: {
           "Authorization": `Bearer ${accessToken}`

@@ -12,6 +12,7 @@ const InputField = styled(TextField)({
 });
 
 const SignUp = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -44,7 +45,7 @@ const SignUp = () => {
       formDataToSend.append('contactNo', formData.contactNo);
       formDataToSend.append('avatar', formData.avatar);
       console.log(formData.avatar)
-      const res = await axios.post('http://localhost:8000/user/register', formDataToSend)
+      const res = await axios.post(`${backendUrl}/user/register`, formDataToSend)
       console.log(res.data.data.data)
       dispatch(loginSuccess(res.data.data.data))
       navigate('/')
