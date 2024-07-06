@@ -6,6 +6,9 @@ import { logout } from '../redux/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useErrorContext } from '../context/ErrorContext';
+import { useResponseContext } from '../context/ResponseContext';
+import { errorParser } from '../utils/errorParser';
 
 export default function UserProfile({ imgSrc  }) {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -14,6 +17,10 @@ export default function UserProfile({ imgSrc  }) {
   const navigate = useNavigate()
   const accessToken = useSelector(state => state.currentUser?.accessToken)
   const dispatch = useDispatch()
+  const {setError} = useErrorContext()
+  const {setIsLoading}=useLoadingContext()
+  const {setResponse}=useResponseContext()
+ 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,6 +31,7 @@ export default function UserProfile({ imgSrc  }) {
 
   const logoutHandler = async () => {
     try {
+      setIsLoading(true)
       await axios.get(`${backendUrl}/user/logout`, {
         withCredentials: true,
         headers: {
@@ -32,9 +40,13 @@ export default function UserProfile({ imgSrc  }) {
       });
       dispatch(logout())
       navigate('/')
-
+      setResponse("Logged out successfully")
     } catch (error) {
       console.log("Error in logout", error)
+      setError(errorParser(error))
+    }
+    finally{
+      setIsLoading(false)
     }
   }
 

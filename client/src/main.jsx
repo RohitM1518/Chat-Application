@@ -10,6 +10,9 @@ import { Home, SignUp, SignIn, ChatPage, NoChatSelected } from './pages/index.js
 import { PersistGate } from 'redux-persist/integration/react'
 import { SocketContextProvider } from './context/SocketContext.jsx'
 import { SidebarContextProvider } from './context/SidebarContext.jsx'
+import { LoadingContextProvider } from './context/LoadingContext.jsx'
+import { ResponseContextProvider } from './context/ResponseContext.jsx'
+import { ErrorContextProvider } from './context/ErrorContext.jsx'
 
 const router = createBrowserRouter([{
   path: '/',
@@ -47,7 +50,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <PersistGate loading={null} persistor={persistor}>
         <SocketContextProvider>
           <SidebarContextProvider>
+            <LoadingContextProvider>
+              <ResponseContextProvider>
+                <ErrorContextProvider>
           <RouterProvider router={router} />
+          </ErrorContextProvider>
+          </ResponseContextProvider>
+          </LoadingContextProvider>
           </SidebarContextProvider>
         </SocketContextProvider>
       </PersistGate>

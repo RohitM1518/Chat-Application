@@ -7,6 +7,11 @@ import { loginSuccess,logout } from './redux/userSlice'
 import axios from 'axios'
 import { useSocketContext } from './context/SocketContext'
 import {persistor} from './redux/store.js'
+import {LinearProgress} from '@mui/material'
+import { useLoadingContext } from './context/LoadingContext'
+import { useResponseContext } from './context/ResponseContext'
+import { useErrorContext } from './context/ErrorContext'
+
 
 function App() {
   const dispatch = useDispatch()
@@ -22,6 +27,20 @@ function App() {
       })
     }
   },[socket])
+  const { response, setResponse } = useResponseContext()
+  const {error,setError}=useErrorContext()
+  const {isLoading}=useLoadingContext()
+
+  if(error){
+    setTimeout(()=>{
+      setError('')
+    },5000)
+  }
+  if(response){
+    setTimeout(()=>{
+      setResponse('')
+    },5000)
+  }
 
 // useEffect(()=>{
 //   const refreshTheToken = async () => {
@@ -50,6 +69,19 @@ function App() {
   return (
     <div className=' relative'>
    <Header />
+   {response && <div className="toast toast-bottom toast-start z-50">
+        <div className="alert bg-green-500">
+          <span className=' text-black'>{response}</span>
+        </div>
+      </div>}
+      {error && <div className="toast toast-bottom toast-start z-50">
+        <div className="alert bg-red-400">
+          <span className=' text-black'>{error}</span>
+        </div>
+      </div>}
+      {isLoading && <div className=''>
+      <LinearProgress />
+      </div>}
    <Outlet />
    <Footer />
    </div>

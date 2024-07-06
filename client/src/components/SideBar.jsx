@@ -9,6 +9,9 @@ import { errorParser } from '../utils/errorParser';
 import GroupList from './GroupList';
 import { MdCancelPresentation } from "react-icons/md";
 import { useSidebarContext } from '../context/SidebarContext';
+import { useErrorContext } from '../context/ErrorContext';
+import { useLoadingContext } from '../context/LoadingContext';
+import { useResponseContext } from '../context/ResponseContext';
 
 const SideBar = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -23,7 +26,10 @@ const SideBar = () => {
     const accessToken = useSelector(state => state?.user?.accessToken);
     const refreshToken = useSelector(state => state?.user?.currentUser?.refreshToken);
     const { isSidebar, setIsSidebar }= useSidebarContext()
-    
+    const {setError} = useErrorContext()
+    const {setIsLoading}=useLoadingContext()
+    const {setResponse}=useResponseContext()
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -70,7 +76,10 @@ const SideBar = () => {
             }
         });
     };
-
+    const selectUser=(user)=>{
+        navigate(`/chats/${user._id}`) 
+        // setIsSidebar(false)
+    }
     const createAGroupChat = async () => {
         try {
             const payload = {
@@ -78,6 +87,7 @@ const SideBar = () => {
                 name: groupName
             }
             console.log("payload", payload)
+            setIsLoading(true)
             await axios.post('http://localhost:8000/chat/group', payload, {
                 withCredentials: true,
                 headers: {
@@ -85,19 +95,23 @@ const SideBar = () => {
                 }
             })
             setStatus(false)
+            setResponse("Group Created")
         } catch (error) {
             const errMsg = errorParser(error)
-            console.log(error)
             console.log(errMsg)
+            setError(errMsg)
+        }
+        finally{
+            setIsLoading(false)
         }
     }
 
     return (
-        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 relative py-10 px-2 w-96 z-10 flex flex-col gap-6  max-lg:w-full rounded-r-md h-screen overflow-auto'>
+        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 relative py-10 px-2 w-96 z-10 flex flex-col gap-6  max-lg:w-full rounded-r-md h-screen overflow-auto max-lg:px-7 '>
             {isSidebar && <div className='hover:cursor-pointer absolute right-5 top-3 mb-3' onClick={() => setIsSidebar(false)}>
                 <MdCancelPresentation style={{width:25,height:25,color:'white'}}/>
             </div>}
-            {!status && <Button variant='contained' onClick={() => setStatus(true)}>Create Group Chat</Button>}
+            {!status && showUsers && <Button variant='contained' onClick={() => setStatus(true)}>Create Group Chat</Button>}
             {status && <div className=' flex flex-col justify-center gap-4'>
                 <input onChange={(e) => { setGroupName(e.target.value) }} value={groupName} type="text" placeholder="Group Name" className="input input-bordered input-primary w-full max-w-xs" />
                 <div className=' flex justify-evenly'>
@@ -111,7 +125,7 @@ const SideBar = () => {
             </div>
             {showUsers && users && users.map((user) => (
                 <div key={user._id} className="flex gap-2 items-center">
-                    <div className="hover:cursor-pointer w-full" onClick={() => { navigate(`/chats/${user._id}`) }}>
+                    <div className="hover:cursor-pointer w-full" onClick={()=>{selectUser(user)}}>
                         <User user={user} />
                     </div>
                     {status && <input

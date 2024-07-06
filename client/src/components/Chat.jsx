@@ -10,15 +10,18 @@ import User from './User';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useAlertContext } from '../context/AlertContext';
 import Alert from './Alert';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Group from './Group';
 import { useSidebarContext } from '../context/SidebarContext';
-
+import { useErrorContext } from '../context/ErrorContext';
+import { useLoadingContext } from '../context/LoadingContext';
+import { useResponseContext } from '../context/ResponseContext';
+import { errorParser } from '../utils/errorParser';
 
 const Chat = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { messages, setMessages } = useMessageContext();
-    const { chat } = useChatContext();
+    const { chat,setChat } = useChatContext();
     // const {groupid}=useParams()
     const [users, setUsers] = useState([])
     const {alert} = useAlertContext()
@@ -27,6 +30,10 @@ const Chat = () => {
     const [receiver,setReceiver]=useState(null)
     const user = useSelector(state => state.user.currentUser);
     const { modification, setModification } = useChatModification()
+    const {setError} = useErrorContext()
+    const {setIsLoading}=useLoadingContext()
+    const {setResponse}=useResponseContext()
+    const navigate = useNavigate()
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -63,7 +70,50 @@ const Chat = () => {
         };
         fetchUsers()
     }, [chat])
-
+    const handleExit = async () => {
+        try {
+          setIsLoading(true)
+          await axios.delete(`${backendUrl}/chat/leave/group/${chat._id}`, {
+            withCredentials: true,
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          })
+          setModification('')
+          setChat(null)
+          setMessages([])
+          navigate('/chats')
+          setResponse("Participant removed successfully")
+        } catch (error) {
+          console.log(error)
+          setError(errorParser(error))
+        }
+        finally{
+          setIsLoading(false)
+        }
+      }
+    const handleDelete = async () => {
+        try {
+          setIsLoading(true)
+          await axios.delete(`${backendUrl}/chat/group/${chat._id}`, {
+            withCredentials: true,
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          })
+          setModification('')
+          setChat(null)
+          setMessages([])
+          navigate('/chats')
+          setResponse("Participant removed successfully")
+        } catch (error) {
+          console.log(error)
+          setError(errorParser(error))
+        }
+        finally{
+          setIsLoading(false)
+        }
+      }
     useEffect(() => {
         const fetchMessages = async () => {
             try {
@@ -94,13 +144,13 @@ const Chat = () => {
     }
     return (
         <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 flex flex-col justify-between ${alert?" p-20":""}`} >
+            {alert && <Alert message="Are you sure?" url={`${backendUrl}/chat/remove/${chat._id}`}/>}
             {chat && !chat.isGroupChat && <div className='mb-5'>
                 <User user={receiver} onlyName={true}/>
             </div>}
             {chat && chat.isGroupChat && <div className='mb-5'>
                 <Group group={chat} onlyName={true}/>
             </div>}
-            {alert && <Alert />}
             {
                 modification === 'remove' ? (
                     <div className=' max-w-lg flex flex-col gap-4 min-h-96 overflow-auto'>
@@ -118,7 +168,8 @@ const Chat = () => {
             }
             {
                 modification === 'add' ? (
-                    <div className=' max-w-lg flex flex-col gap-4 min-h-96 overflow-auto'>
+                    <div className=''>
+                    <div className=' max-w-lg flex-col gap-4 min-h-96 overflow-auto'>
                         {alert && <Alert />}
                         <div onClick={handleCancel} className=' hover:cursor-pointer'><CancelIcon /></div>
                         {users?.map((user) => (
@@ -128,12 +179,13 @@ const Chat = () => {
                         ))
                         }
                     </div>
+                    </div>
                 ) : (
                     <div></div>
                 )
             }
             {
-                modification == 'exit' ? (<div>
+                modification == 'exit' ? (<div className=' flex justify-center'>
                     <div className="card w-96 bg-base-100 shadow-xl">
                         <div className="card-body">
                             <h2 className="card-title">Are you sure?</h2>
@@ -142,14 +194,14 @@ const Chat = () => {
                                 <button className='btn bg-slate-700 hover:bg-slate-700 w-24' onClick={handleCancel}>
                                 <CancelIcon />
                                 </button>
-                                <button className="btn bg-red-700 w-24 hover:bg-red-600">Exit</button>
+                                <button className="btn bg-red-700 w-24 hover:bg-red-600" onClick={handleExit}>Exit</button>
                             </div>
                         </div>
                     </div>
                 </div>) : (<div></div>)
             }
             {
-                modification == 'delete' ? (<div>
+                modification == 'delete' ? (<div className=' flex justify-center'>
                     <div className="card w-96 bg-base-100 shadow-xl">
                         <div className="card-body">
                             <h2 className="card-title">Are you sure?</h2>
@@ -158,7 +210,7 @@ const Chat = () => {
                                 <button className='btn bg-slate-700 hover:bg-slate-700 w-24' onClick={handleCancel}>
                                 <CancelIcon />
                                 </button>
-                                <button className="btn bg-red-700 w-24 hover:bg-red-600">Delete</button>
+                                <button className="btn bg-red-700 w-24 hover:bg-red-600" onClick={handleDelete}>Delete</button>
                             </div>
                         </div>
                     </div>
@@ -172,9 +224,9 @@ const Chat = () => {
                         </div>
                     ))
                 ) : (
-                    <h1 className='text-white text-center text-lg opacity-65'>No messages yet</h1>
+                    <h1 className='text-white text-center text-lg opacity-65'>No messages</h1>
                 )}
-                <div ref={messagesEndRef} />
+                {/* <div ref={messagesEndRef} /> */}
             </div>
             <MessageInput />
         </div>

@@ -7,6 +7,7 @@ import Group  from './Group';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useChatContext } from '../context/ChatContext';
 import { useMessageContext } from '../context/MessageContext';
+import { useSidebarContext } from '../context/SidebarContext';
 const GroupList = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const accessToken = useSelector(state => state?.user?.accessToken);
@@ -15,6 +16,7 @@ const GroupList = () => {
     const {groupid} = useParams()
     const {setChat} = useChatContext()
     const {setMessages} = useMessageContext()
+    const {setIsSidebar}=useSidebarContext()
     useEffect(()=>{
         
         const fetchMessages = async () => {
@@ -55,6 +57,7 @@ const GroupList = () => {
 
     const handleClick=(group)=>{
         navigate(`/chats/group/${group._id}`) 
+        // setIsSidebar(false)
         setChat(group)
         const fetchMessages = async () => {
             try {

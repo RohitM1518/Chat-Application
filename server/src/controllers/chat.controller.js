@@ -231,10 +231,13 @@ const createAGroupChat = asyncHandler(async (req, res) => {
 
 const deleteGroupChat = asyncHandler(async (req, res) => {
     const { chatId } = req.params
-    const chat = await Chat.find({ _id: new mongoose.Types.ObjectId(chatId), isGroupChat: true })
+    const chat = await Chat.findOne({ _id: new mongoose.Types.ObjectId(chatId), isGroupChat: true })
     if (!chat) {
         throw new ApiError(404, "Chat Not Found")
     }
+    
+    // console.log("HI",chat)
+    // console.log("HI",req.user._id.toString())
     if (chat.admin.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "You are not authorized to delete this chat")
     }

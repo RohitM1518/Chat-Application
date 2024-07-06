@@ -6,6 +6,7 @@ import { errorParser } from '../utils/errorParser'
 import { useSelector } from 'react-redux'
 import { useMessageContext } from '../context/MessageContext'
 import { useSocketContext } from '../context/SocketContext'
+import { useErrorContext } from '../context/ErrorContext'
 
 const MessageInput = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -15,6 +16,7 @@ const MessageInput = () => {
   const accessToken = useSelector(state => state?.user?.accessToken)
   const[content,setContent] = useState('')
   const {socket} = useSocketContext()
+  const {setError} = useErrorContext()
 
   if(socket){
   socket.on('messageReceived',(messagesRes)=>{
@@ -41,6 +43,7 @@ const MessageInput = () => {
     } catch (error) {
       const errMsg = errorParser(error)
       console.log(errMsg)
+      setError(errMsg)
     }
   }
   return (

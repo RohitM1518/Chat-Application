@@ -24,7 +24,7 @@ const ChatPage = () => {
                   <SideBar />
                 </div>}
               </div>
-              <div className='w-full'>
+              <div className={`w-full ${isSidebar?"":""}`}>
                 <Chat />
               </div>
             </AlertContextProvider>

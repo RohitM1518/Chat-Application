@@ -6,6 +6,10 @@ import axios from 'axios';
 import { useChatContext } from '../context/ChatContext';
 import { useMessageContext } from '../context/MessageContext';
 import { Button } from '@mui/material';
+import { useResponseContext } from '../context/ResponseContext';
+import { useLoadingContext } from '../context/LoadingContext';
+import { useErrorContext } from '../context/ErrorContext';
+import { errorParser } from '../utils/errorParser';
 
 const Message = ({ message }) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -14,6 +18,9 @@ const Message = ({ message }) => {
     const {setMessages} = useMessageContext()
     const user = useSelector(state => state?.user?.currentUser);
     const accessToken = useSelector(state=>state?.user?.accessToken)
+    const {setError} = useErrorContext()
+    const {setIsLoading}=useLoadingContext()
+    const {setResponse}=useResponseContext()
     useEffect(() => {
         if (message?.sender?._id === user?._id) {
             setIsSender(true);
@@ -21,6 +28,7 @@ const Message = ({ message }) => {
     }, [message, user]);
     const deleteMessage = async()=>{
         try {
+            setIsLoading(true)
             await axios.delete(`${backendUrl}/message/${chat._id}/${message._id}`,{
                 withCredentials:true,
                 headers:{
@@ -28,8 +36,12 @@ const Message = ({ message }) => {
                 }
             })
             setMessages(prevMsgs=>prevMsgs.filter(msg=>msg._id != message._id))
-        } catch (error) {
             
+        } catch (error) {
+            setError(errorParser(error))
+        }
+        finally{
+            setIsLoading(false)
         }
     }
     const formattedDate = format(new Date(message?.createdAt), 'Pp');

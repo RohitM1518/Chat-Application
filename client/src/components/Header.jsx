@@ -7,6 +7,10 @@ import { logout } from '../redux/userSlice';
 import axios from 'axios';
 import { useSidebarContext } from '../context/SidebarContext';
 import { GiHamburgerMenu } from "react-icons/gi";
+import { useResponseContext } from '../context/ResponseContext';
+import { useLoadingContext } from '../context/LoadingContext';
+import { useErrorContext } from '../context/ErrorContext';
+import { errorParser } from '../utils/errorParser';
 
 const Header = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -19,9 +23,12 @@ const Header = () => {
     console.log(isLogin)
     console.log(accessToken)
     const { isSidebar, setIsSidebar }= useSidebarContext()
-
+    const {setError} = useErrorContext()
+    const {setIsLoading}= useLoadingContext()
+    const {setResponse}=useResponseContext()
     const handleLogout = async () => {
         try {
+            setIsLoading(true)
             await axios.get(`${backendUrl}/user/logout`, {
                 withCredentials: true,
                 headers: {
@@ -30,13 +37,18 @@ const Header = () => {
             });
             dispatch(logout());
             navigate('/');
+            setResponse("Logged Out")
         } catch (error) {
+            setError(errorParser(error))
             console.log("Error in logout", error);
+        }
+        finally{
+            setIsLoading(false)
         }
     };
 
     return (
-        <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10">
+        <div className={`flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10 ${isSidebar?" max-lg:hidden":""}`}>
             {!isSidebar && <div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
                   <GiHamburgerMenu style={{ width: 25, height: 25,color:'white' }}/>
                 </div>}
