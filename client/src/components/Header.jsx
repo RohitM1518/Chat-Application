@@ -49,7 +49,7 @@ const Header = () => {
 
     return (
         <div className={`flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10 ${isSidebar?" max-lg:hidden":""}`}>
-            {!isSidebar && <div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
+            {!isSidebar && user && <div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
                   <GiHamburgerMenu style={{ width: 25, height: 25,color:'white' }}/>
                 </div>}
             {isLogin && (
