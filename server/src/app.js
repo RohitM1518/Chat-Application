@@ -7,17 +7,17 @@ import { Server } from "socket.io";
 
 const app = express();
 const httpServer = createServer(app);
-
+// console.log("Hello ",process.env.CORS_ORIGIN)
 // Assuming your front-end is running on a different port like 3000
 const io = new Server(httpServer, {
   pingTimeout: 60000,
   cors: {
-    origin: 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   },
 });
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow requests from your front-end origin
+    origin: process.env.CORS_ORIGIN, // Allow requests from your front-end origin
     credentials: true, // Allow requests with credentials (e.g., cookies, auth tokens)
 }));
 app.set("io",io)
