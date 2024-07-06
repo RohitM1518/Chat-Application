@@ -11,7 +11,7 @@ import { MoreVert } from '@mui/icons-material'
 import Alert from './Alert'
 import { useAlertContext } from '../context/AlertContext'
 
-const User = ({ user, deleteButton, addButton }) => {
+const User = ({ user, deleteButton, addButton,onlyName }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [lastMessage, setLastMessage] = useState(null)
   const { messages } = useMessageContext()
@@ -88,9 +88,9 @@ const User = ({ user, deleteButton, addButton }) => {
       <div>
         <div className=' flex w-full gap-10 items-center'>
           <h3 className=' text-white text-lg font-semibold block'>{user?.fullName}</h3>
-          {!deleteButton && !addButton && <p className=' text-white text-sm block'>{formattedDate}</p>}
+          {!deleteButton && !addButton && !onlyName &&<p className=' text-white text-sm block'>{formattedDate}</p>}
         </div>
-        {lastMessage && !deleteButton && !addButton && <div>
+        {lastMessage && !deleteButton && !addButton &&!onlyName && <div>
           <h3 className=' text-white text-sm opacity-65'>{lastMessage?.sender?._id == currentUser?._id ? "You: " : lastMessage?.sender?.fullName + ": "}{lastMessage?.content}</h3>
         </div>}
       </div>
@@ -103,7 +103,7 @@ const User = ({ user, deleteButton, addButton }) => {
         <Button color='success' variant='contained' sx={{ width: 30, height: 25 }} onClick={addParticipant}>Add</Button>
       }
       {
-        !deleteButton && !addButton && lastMessage && <div className="dropdown dropdown-left dropdown-end absolute right-2">
+        !deleteButton && !addButton && lastMessage && !onlyName && <div className="dropdown dropdown-left dropdown-end absolute right-2">
         <div tabIndex={0} role="button" className="m-1"><MoreVert sx={{color:'white'}}/></div>
         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow rounded-box w-52 bg-slate-300 text-black">
           <li className='' onClick={handleDeleteChat}><a>Delete Chat</a></li>

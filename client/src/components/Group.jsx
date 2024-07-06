@@ -8,12 +8,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { useChatModification } from '../context/ChatModificationContext';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
-const Group = ({ group }) => {
+import { useSidebarContext } from '../context/SidebarContext';
+const Group = ({ group,onlyName }) => {
     const currentUser = useSelector(state=>state?.user?.currentUser)
     const [lastMessage,setLastMessage] = useState(null)
     const {setModification }= useChatModification()
     const {messages} = useMessageContext()
+    const {isSidebar,setIsSidebar}=useSidebarContext()
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -21,18 +22,22 @@ const Group = ({ group }) => {
     };
     const handleAdd=()=>{
         setModification('add')
+        setIsSidebar(false)
         handleClose()
     }
     const handleRemove=()=>{
         setModification('remove')
+        setIsSidebar(false)
         handleClose()
     }
     const handleExit=()=>{
         setModification('exit')
+        setIsSidebar(false)
         handleClose()
     }
     const handleDelete=()=>{
         setModification('delete')
+        setIsSidebar(false)
         handleClose()
     }
     const handleCloseDropDown=()=>{
@@ -58,11 +63,11 @@ const Group = ({ group }) => {
                 </div>
                 <div className="avatar">
                     <div className="w-12">
-                        <img src={group.participants[0].avatar} />
+                        <img src={group.participants[1].avatar} />
                     </div>
                 </div>
                 <div className="avatar placeholder">
-                    <div className="w-12 text-neutral-content bg-slate-300">
+                    <div className="w-12 text-neutral-content bg-slate-600">
                         +<span>{group.participants.length - 2}</span>
                     </div>
                 </div>
@@ -73,7 +78,7 @@ const Group = ({ group }) => {
             <h2 className=' text-white text-lg font-semibold block'>{group?.name}</h2>
             </div>
             <div>
-      <Button
+     {!onlyName && <Button
         id="demo-positioned-button"
         aria-controls={open ? 'demo-positioned-menu' : undefined}
         aria-haspopup="true"
@@ -81,7 +86,7 @@ const Group = ({ group }) => {
         onClick={handleClick}
       >
     <MoreVertIcon color='action' sx={{ fontSize: 27, '&:hover':{ color:'white'},color:'white' }}/>
-      </Button>
+      </Button>}
       <Menu
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"
@@ -102,11 +107,11 @@ const Group = ({ group }) => {
         <MenuItem onClick={handleRemove} >Remove Participant</MenuItem>
         <MenuItem onClick={handleExit} >Exit Group</MenuItem>
         <MenuItem onClick={handleDelete} >Delete Group</MenuItem>
-        <MenuItem onClick={handleCloseDropDown}  ><CloseIcon /></MenuItem>
+        <MenuItem onClick={handleCloseDropDown} ><CloseIcon /></MenuItem>
       </Menu>
     </div>
             </div>
-            {lastMessage && <div>
+            {lastMessage && !onlyName && <div>
           <h3 className=' text-white text-sm opacity-65'>{lastMessage?.sender?._id == currentUser?._id?"You: ":lastMessage?.sender?.fullName+": "}{lastMessage?.content}</h3>
         </div>}
             </div>

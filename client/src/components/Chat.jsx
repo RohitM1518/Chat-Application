@@ -8,19 +8,24 @@ import { useMessageContext } from '../context/MessageContext';
 import { useChatModification } from '../context/ChatModificationContext';
 import User from './User';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Card } from '@mui/material';
 import { useAlertContext } from '../context/AlertContext';
 import Alert from './Alert';
+import { useParams } from 'react-router-dom';
+import Group from './Group';
+import { useSidebarContext } from '../context/SidebarContext';
 
 
 const Chat = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { messages, setMessages } = useMessageContext();
     const { chat } = useChatContext();
+    // const {groupid}=useParams()
     const [users, setUsers] = useState([])
     const {alert} = useAlertContext()
     const accessToken = useSelector(state => state?.user?.accessToken);
     const messagesEndRef = useRef(null);
+    const [receiver,setReceiver]=useState(null)
+    const user = useSelector(state => state.user.currentUser);
     const { modification, setModification } = useChatModification()
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,6 +47,16 @@ const Chat = () => {
                     // Handle cases where chat.participants or res.data.data are not properly defined
                     setUsers([]);
                 }
+                const rec= chat.participants.filter(participant =>
+                    participant?._id?.toString() !== user?._id?.toString()
+                )
+                // console.log("Group chat",chat)
+                if(rec){
+                    console.log("Recever",rec)
+                setReceiver(rec[0])
+                }
+                console.log("Chat",chat)
+                console.log("Rec ",rec)
             } catch (error) {
                 console.log(error);
             }
@@ -78,7 +93,13 @@ const Chat = () => {
         setModification('')
     }
     return (
-        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen p-24 flex flex-col justify-between ${alert?" p-20":""}`} >
+        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 flex flex-col justify-between ${alert?" p-20":""}`} >
+            {chat && !chat.isGroupChat && <div className='mb-5'>
+                <User user={receiver} onlyName={true}/>
+            </div>}
+            {chat && chat.isGroupChat && <div className='mb-5'>
+                <Group group={chat} onlyName={true}/>
+            </div>}
             {alert && <Alert />}
             {
                 modification === 'remove' ? (
@@ -143,7 +164,6 @@ const Chat = () => {
                     </div>
                 </div>) : (<div></div>)
             }
-
             <div className={`flex flex-col gap-4 overflow-auto h-screen ${modification == '' ? "" : " blur-xl"}`}>
                 {messages.length > 0 ? (
                     messages.map((message) => (

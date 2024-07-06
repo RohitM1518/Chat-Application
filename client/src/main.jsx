@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { Home, SignUp, SignIn, ChatPage, NoChatSelected } from './pages/index.js'
 import { PersistGate } from 'redux-persist/integration/react'
 import { SocketContextProvider } from './context/SocketContext.jsx'
+import { SidebarContextProvider } from './context/SidebarContext.jsx'
 
 const router = createBrowserRouter([{
   path: '/',
@@ -45,7 +46,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SocketContextProvider>
+          <SidebarContextProvider>
           <RouterProvider router={router} />
+          </SidebarContextProvider>
         </SocketContextProvider>
       </PersistGate>
     </Provider>

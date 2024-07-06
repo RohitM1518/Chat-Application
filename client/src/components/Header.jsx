@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/userSlice';
 import axios from 'axios';
+import { useSidebarContext } from '../context/SidebarContext';
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const Header = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -16,6 +18,7 @@ const Header = () => {
     console.log(user)
     console.log(isLogin)
     console.log(accessToken)
+    const { isSidebar, setIsSidebar }= useSidebarContext()
 
     const handleLogout = async () => {
         try {
@@ -34,6 +37,9 @@ const Header = () => {
 
     return (
         <div className="flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10">
+            {!isSidebar && <div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
+                  <GiHamburgerMenu style={{ width: 25, height: 25,color:'white' }}/>
+                </div>}
             {isLogin && (
                     <div className="relative flex items-center gap-4 ml-4">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />

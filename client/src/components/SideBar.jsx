@@ -7,6 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { errorParser } from '../utils/errorParser';
 import GroupList from './GroupList';
+import { MdCancelPresentation } from "react-icons/md";
+import { useSidebarContext } from '../context/SidebarContext';
 
 const SideBar = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -20,7 +22,8 @@ const SideBar = () => {
     const navigate = useNavigate();
     const accessToken = useSelector(state => state?.user?.accessToken);
     const refreshToken = useSelector(state => state?.user?.currentUser?.refreshToken);
-
+    const { isSidebar, setIsSidebar }= useSidebarContext()
+    
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -90,7 +93,10 @@ const SideBar = () => {
     }
 
     return (
-        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 py-10 px-2 w-96 flex flex-col gap-6 h-screen overflow-auto'>
+        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 relative py-10 px-2 w-96 z-10 flex flex-col gap-6  max-lg:w-full rounded-r-md h-screen overflow-auto'>
+            {isSidebar && <div className='hover:cursor-pointer absolute right-5 top-3 mb-3' onClick={() => setIsSidebar(false)}>
+                <MdCancelPresentation style={{width:25,height:25,color:'white'}}/>
+            </div>}
             {!status && <Button variant='contained' onClick={() => setStatus(true)}>Create Group Chat</Button>}
             {status && <div className=' flex flex-col justify-center gap-4'>
                 <input onChange={(e) => { setGroupName(e.target.value) }} value={groupName} type="text" placeholder="Group Name" className="input input-bordered input-primary w-full max-w-xs" />
@@ -100,8 +106,8 @@ const SideBar = () => {
                 </div>
             </div>}
             <div>
-                <button className={`btn btn-ghost ${showUsers?' text-white':''}`} onClick={() => setShowUsers(true)}>Users</button>
-                <button className={`btn btn-ghost ${!showUsers?' text-white':''}`} onClick={() => setShowUsers(false)}>Groups</button>
+                <button className={`btn btn-ghost ${showUsers ? ' text-white' : ''}`} onClick={() => setShowUsers(true)}>Users</button>
+                <button className={`btn btn-ghost ${!showUsers ? ' text-white' : ''}`} onClick={() => setShowUsers(false)}>Groups</button>
             </div>
             {showUsers && users && users.map((user) => (
                 <div key={user._id} className="flex gap-2 items-center">
