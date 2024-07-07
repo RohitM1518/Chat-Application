@@ -53,7 +53,7 @@ const Header = () => {
                   <GiHamburgerMenu style={{ width: 25, height: 25,color:'white' }}/>
                 </div>}
             {isLogin && (
-                    <div className="relative flex items-center gap-4 ml-4">
+                    <div className="relative flex items-center gap-4 ml-4 max-sm:hidden">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
                         <h5 className=' text-white text-lg'>{user?.fullName}</h5>
                     </div>
