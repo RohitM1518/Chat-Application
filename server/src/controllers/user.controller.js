@@ -33,8 +33,8 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     const { fullName, email, password, contactNo } = req.body
-    console.log("Full Name ", fullName)
-    console.log("password ", password)
+    // console.log("Full Name ", fullName)
+    // console.log("password ", password)
     if ([fullName, email, password, contactNo].some((feild) => feild?.trim() === "")) {
         throw new ApiError(400, "All fields are required")
     }
@@ -45,7 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.file?.path;
-    console.log(req.file)
+    // console.log(req.file)
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar is required")
     }
@@ -81,7 +81,7 @@ const registerUser = asyncHandler(async (req, res) => {
         //TODO: For production set it to true
     }
     
-    console.log("1")
+    // console.log("1")
 
     createdUser.accessToken = accessToken;
     return res.status(201)
@@ -102,9 +102,9 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User Does not Exists")
     }
-    console.log("Password ",password)
+    // console.log("Password ",password)
     const isPasswordValid = await user.isPasswordCorrect(password)
-    console.log("isPasswordValid ",isPasswordValid)
+    // console.log("isPasswordValid ",isPasswordValid)
 
     if (!isPasswordValid) {
         throw new ApiError(401, "Invalid user Credentials")
@@ -119,9 +119,9 @@ const loginUser = asyncHandler(async (req, res) => {
         secure: false //This means a cookie can only be accessed by the server if the request is being sent over HTTPS
         //TODO: For production set it to true
     }
-    console.log("Access token", accessToken)
+    // console.log("Access token", accessToken)
     loggedInUser.accessToken = accessToken;
-    console.log(loggedInUser)
+    // console.log(loggedInUser)
     return res
         .status(200)
         .cookie("accessToken", accessToken, options)
@@ -157,7 +157,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
-    console.log("Refresh Token later", req.body.refreshToken)
+    // console.log("Refresh Token later", req.body.refreshToken)
     if (!incomingRefreshToken || incomingRefreshToken === "null") {
         throw new ApiError(401, "Unauthorized request")
     }
@@ -231,7 +231,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         $set: { fullName, email: email }
     }, { new: true }).select("-password") //This option, when set to true, instructs Mongoose to return the modified document rather than the original one. 
 
-    console.log("Successfull")
+    // console.log("Successfull")
     return res
         .status(200)
         .json(new ApiResponse(

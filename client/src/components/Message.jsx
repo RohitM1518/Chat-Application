@@ -55,7 +55,7 @@ const Message = ({ message }) => {
                     </div>
                 </div>
                 <div className="chat-header text-white">
-                    {isSender ? 'Me' : message?.sender?.fullName}
+                    {isSender ? 'You' : message?.sender?.fullName}
                 </div>
                 <div className="chat-bubble">{message?.content}</div>
                 <div className="chat-footer text-white">

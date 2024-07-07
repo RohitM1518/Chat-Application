@@ -6,7 +6,6 @@ import { useDispatch,useSelector } from 'react-redux'
 import { loginSuccess,logout } from './redux/userSlice'
 import axios from 'axios'
 import { useSocketContext } from './context/SocketContext'
-import {persistor} from './redux/store.js'
 import {LinearProgress} from '@mui/material'
 import { useLoadingContext } from './context/LoadingContext'
 import { useResponseContext } from './context/ResponseContext'
@@ -19,11 +18,10 @@ function App() {
   const accessToken = useSelector(state => state?.user?.accessToken)
   const {socket} = useSocketContext();
   // console.log("socket",socket)
-  // persistor.purge();
   useEffect(()=>{
     if(socket){
       socket.on('connect',()=>{
-        console.log('Connected to socket server')
+        // console.log('Connected to socket server')
       })
     }
   },[socket])
@@ -67,7 +65,7 @@ function App() {
 //   refreshTheToken();
 // },[])
   return (
-    <div className=' relative'>
+    <div className='relative mt-0'>
    <Header />
    {response && <div className="toast toast-bottom toast-start z-50">
         <div className="alert bg-green-500">

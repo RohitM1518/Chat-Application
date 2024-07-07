@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Toolbar, IconButton, Typography, Avatar, Badge, Button } from '@mui/material';
+import { Toolbar, IconButton, Typography, Avatar, Button } from '@mui/material';
 import { Notifications, Settings } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/userSlice';
 import axios from 'axios';
 import { useSidebarContext } from '../context/SidebarContext';
@@ -11,19 +11,21 @@ import { useResponseContext } from '../context/ResponseContext';
 import { useLoadingContext } from '../context/LoadingContext';
 import { useErrorContext } from '../context/ErrorContext';
 import { errorParser } from '../utils/errorParser';
+import { persistor } from '../redux/store';
 
 const Header = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const location = useLocation()
+    // console.log("Location ",location)
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accessToken = useSelector(state => state?.user?.accessToken);
     const isLogin = useSelector(state => state?.user?.authStatus);
     const user = useSelector(state => state.user.currentUser);
-    console.log(user)
-    console.log(isLogin)
-    console.log(accessToken)
+    // console.log(user)
+    // console.log(isLogin)
+    // console.log(accessToken)
     const { isSidebar, setIsSidebar }= useSidebarContext()
-    const {setError} = useErrorContext()
     const {setIsLoading}= useLoadingContext()
     const {setResponse}=useResponseContext()
     const handleLogout = async () => {
@@ -39,8 +41,10 @@ const Header = () => {
             navigate('/');
             setResponse("Logged Out")
         } catch (error) {
-            setError(errorParser(error))
-            console.log("Error in logout", error);
+            // setError(errorParser(error))
+            // console.log("Error in logout", error);
+            persistor.purge();
+            setResponse("Logged Out")
         }
         finally{
             setIsLoading(false)
@@ -49,13 +53,13 @@ const Header = () => {
 
     return (
         <div className={`flex items-center justify-between bg-gradient-to-r from-cyan-600 via-purple-500 to-pink-500 z-10 ${isSidebar?" max-lg:hidden":""}`}>
-            {!isSidebar && user && <div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
+            {!isSidebar && user && location.pathname != '/' &&<div className='p-2 hover:cursor-pointer' onClick={()=>setIsSidebar(true)}>
                   <GiHamburgerMenu style={{ width: 25, height: 25,color:'white' }}/>
                 </div>}
             {isLogin && (
                     <div className="relative flex items-center gap-4 ml-4 max-sm:hidden">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
-                        <h5 className=' text-white text-lg'>{user?.fullName}</h5>
+                        <h5 className=' text-white text-lg font-semibold'>{user?.fullName}</h5>
                     </div>
                 )}
             <Toolbar className="w-full flex items-center">

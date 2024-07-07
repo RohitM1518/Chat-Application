@@ -44,18 +44,18 @@ const SignUp = () => {
       formDataToSend.append('password', formData.password);
       formDataToSend.append('contactNo', formData.contactNo);
       formDataToSend.append('avatar', formData.avatar);
-      console.log(formData.avatar)
+      // console.log(formData.avatar)
       const res = await axios.post(`${backendUrl}/user/register`, formDataToSend)
-      console.log(res.data.data.data)
+      // console.log(res.data.data.data)
       dispatch(loginSuccess(res.data.data.data))
       navigate('/')
 
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       const errorMsg = errorParser(error)
       setError(errorMsg)
     }
-    console.log(formData);
+    // console.log(formData);
   };
 
   return (

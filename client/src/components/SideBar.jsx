@@ -41,7 +41,8 @@ const SideBar = () => {
                 });
                 setUsers(res.data.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
+                throw error
             }
         };
         fetchUsers();
@@ -59,7 +60,7 @@ const SideBar = () => {
                 });
                 setChat(res.data.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
         getChat();
@@ -86,9 +87,9 @@ const SideBar = () => {
                 participants: selectedUserIds,
                 name: groupName
             }
-            console.log("payload", payload)
+            // console.log("payload", payload)
             setIsLoading(true)
-            await axios.post('http://localhost:8000/chat/group', payload, {
+            await axios.post(`${backendUrl}/chat/group`, payload, {
                 withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${accessToken}`

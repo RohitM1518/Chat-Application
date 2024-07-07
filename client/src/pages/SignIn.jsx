@@ -28,14 +28,14 @@ const SignIn = () => {
     // Handle form submission
     try {
         const res = await axios.post(`${backendUrl}/user/login`, formData)
-            console.log(res.data.data.data)
+            // console.log(res.data.data.data)
             dispatch(loginSuccess(res.data.data.data))
             navigate('/')
     } catch (error) {
         const errorMsg = errorParser(error)
         setError(errorMsg)
     }
-    console.log(formData);
+    // console.log(formData);
   };
 
   return (

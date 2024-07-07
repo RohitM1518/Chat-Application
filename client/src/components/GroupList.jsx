@@ -27,10 +27,10 @@ const GroupList = () => {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 });
-                console.log("Chat Msg res",res.data.data)
+                // console.log("Chat Msg res",res.data.data)
                 setMessages(res?.data?.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
         if(groupid){
@@ -46,10 +46,10 @@ const GroupList = () => {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 });
-                console.log(res.data.data)
+                // console.log(res.data.data)
                 setGroups(res.data.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
         fetchUsers();
@@ -67,10 +67,10 @@ const GroupList = () => {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 });
-                console.log("Chat Msg res",res.data.data)
+                // console.log("Chat Msg res",res.data.data)
                 setMessages(res?.data?.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
         fetchMessages();

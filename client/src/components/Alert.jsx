@@ -34,7 +34,7 @@ const Alert = ({ message,url}) => {
       navigate('/chats')
       setResponse("Participant removed successfully")
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       setError(errorParser(error))
     }
     finally{

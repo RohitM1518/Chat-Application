@@ -139,7 +139,7 @@ const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
         participants: [req.user._id, new mongoose.Types.ObjectId(receiverId)],
         admin: req.user._id
     })
-    console.log("hi")
+    // console.log("hi")
 
     const newChatDetails = await Chat.aggregate([
         {
@@ -149,7 +149,7 @@ const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
         },
         ...chatCommonAggregation()
     ])
-    console.log("hello")
+    // console.log("hello")
     const payload = newChatDetails[0]
     if (!payload) {
         throw new ApiError(500, "Something went wrong while creating the Chat")
@@ -179,7 +179,7 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     if (!participants) {
         throw new ApiError(400, "Participants are required")
     }
-    console.log(name,participants)
+    // console.log(name,participants)
     // if (participants.includes(req.user._id.toString())) {
     //     throw new ApiError(
     //         400,
@@ -190,14 +190,14 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     if (members.length < 3) {
         throw new ApiError(400, "Atleast Three members needed in the group ")
     }
-    console.log("members",members)
+    // console.log("members",members)
     const groupChat = await Chat.create({
         name,
         isGroupChat: true,
         participants: members,
         admin: req.user._id,
     });
-    console.log("groupchat",groupChat)
+    // console.log("groupchat",groupChat)
     
     const chat = await Chat.aggregate([
         {
@@ -207,7 +207,7 @@ const createAGroupChat = asyncHandler(async (req, res) => {
         },
         ...chatCommonAggregation(),
     ]);
-    console.log("chat",chat)
+    // console.log("chat",chat)
     const payload = chat[0]
     if (!payload) {
         throw new ApiError(500, "Something went wrong while creating the group chat")
@@ -328,6 +328,52 @@ const getGroupChats = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, chats, "List of Chats"))
 
 })
+const getGroupChat = asyncHandler(async (req, res) => {
+    const {chatId} = req.params
+    // console.log("Heyyyyy",chatId)
+    if(!chatId){
+        throw new ApiError(400,"Chat id is required")
+    }
+    const chat = await Chat.aggregate(
+        [
+            {
+                $match: {
+                    _id:new mongoose.Types.ObjectId(chatId),
+                    isGroupChat:true
+                }
+            },
+            {
+                $sort: {
+                    createdAt: 1
+                }
+            },
+            // {
+            //     $lookup:{
+            //         from:"users",
+            //         localField:"participants",
+            //         foreignField:"_id",
+            //         as:"participants",
+            //         pipeline:[
+            //             {
+            //                 $project:{
+            //                     password:0,
+            //                     refreshToken:0
+            //                 }
+            //             }
+            //         ]
+
+            //     }
+            // },
+            ...chatCommonAggregation()
+        ]
+    )
+    if(!chat){
+        throw new ApiError(400,"NO such chat found")
+    }
+
+    return res.status(200).json(new ApiResponse(200, chat[0], "List of Chats"))
+
+})
 const getGroupChatDetails = asyncHandler(async (req, res) => {
     const { chatId } = req.params
     const groupChat = await Chat.aggregate([
@@ -388,7 +434,7 @@ const addNewParticipantInGroupChat = asyncHandler(async (req, res) => {
     if (!groupChat) {
         throw new ApiError(404, "No Such Group Chat found")
     }
-    console.log("Group chat",groupChat.participants)
+    // console.log("Group chat",groupChat.participants)
     if (groupChat?.participants.indexOf(new mongoose.Types.ObjectId(participantId)) !== -1) {
         throw new ApiError(403, "Participant already exists in the chat")
     }
@@ -501,4 +547,5 @@ export {
     removeParticipantFromGroupChat,
     renameGroupChat,
     searchAvailableUsers,
+    getGroupChat
 };

@@ -59,13 +59,13 @@ const Chat = () => {
                 )
                 // console.log("Group chat",chat)
                 if(rec){
-                    console.log("Recever",rec)
+                    // console.log("Recever",rec)
                 setReceiver(rec[0])
                 }
-                console.log("Chat",chat)
-                console.log("Rec ",rec)
+                // console.log("Chat",chat)
+                // console.log("Rec ",rec)
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
         fetchUsers()
@@ -85,7 +85,7 @@ const Chat = () => {
           navigate('/chats')
           setResponse("Participant removed successfully")
         } catch (error) {
-          console.log(error)
+        //   console.log(error)
           setError(errorParser(error))
         }
         finally{
@@ -107,7 +107,7 @@ const Chat = () => {
           navigate('/chats')
           setResponse("Participant removed successfully")
         } catch (error) {
-          console.log(error)
+        //   console.log(error)
           setError(errorParser(error))
         }
         finally{
@@ -123,10 +123,10 @@ const Chat = () => {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 });
-                console.log("Chat Msg res", res.data.data)
+                // console.log("Chat Msg res", res.data.data)
                 setMessages(res?.data?.data);
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }
         };
 
@@ -143,7 +143,7 @@ const Chat = () => {
         setModification('')
     }
     return (
-        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 flex flex-col justify-between ${alert?" p-20":""}`} >
+        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 max-lg:pb-32 flex flex-col justify-between ${alert?" p-20":""}`} >
             {alert && <Alert message="Are you sure?" url={`${backendUrl}/chat/remove/${chat._id}`}/>}
             {chat && !chat.isGroupChat && <div className='mb-5'>
                 <User user={receiver} onlyName={true}/>

@@ -50,7 +50,7 @@ const Group = ({ group, onlyName }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log("Group ", group)
+  // console.log("Group ", group)
   useEffect(() => {
     if (group?.lastMessage) {
       setLastMessage(group.lastMessage)

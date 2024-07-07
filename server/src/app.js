@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 
 const app = express();
 const httpServer = createServer(app);
-console.log("Hello ",process.env.CORS_ORIGIN)
+console.log("CORS ORIGIN",process.env.CORS_ORIGIN)
 // Assuming your front-end is running on a different port like 3000
 const io = new Server(httpServer, {
   pingTimeout: 60000,

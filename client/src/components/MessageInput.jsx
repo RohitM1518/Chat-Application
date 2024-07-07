@@ -20,9 +20,9 @@ const MessageInput = () => {
 
   if(socket){
   socket.on('messageReceived',(messagesRes)=>{
-    console.log("new Message")
+    // console.log("new Message")
     setMessages(messagesRes);
-    console.log(messages)
+    // console.log(messages)
   })
   }
   const sendMessage=async(e)=>{
@@ -42,7 +42,7 @@ const MessageInput = () => {
       // console.log(res)
     } catch (error) {
       const errMsg = errorParser(error)
-      console.log(errMsg)
+      // console.log(errMsg)
       setError(errMsg)
     }
   }

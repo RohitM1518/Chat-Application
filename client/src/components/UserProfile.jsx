@@ -42,7 +42,7 @@ export default function UserProfile({ imgSrc  }) {
       navigate('/')
       setResponse("Logged out successfully")
     } catch (error) {
-      console.log("Error in logout", error)
+      // console.log("Error in logout", error)
       setError(errorParser(error))
     }
     finally{

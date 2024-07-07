@@ -13,34 +13,53 @@ import { SidebarContextProvider } from './context/SidebarContext.jsx'
 import { LoadingContextProvider } from './context/LoadingContext.jsx'
 import { ResponseContextProvider } from './context/ResponseContext.jsx'
 import { ErrorContextProvider } from './context/ErrorContext.jsx'
-
+import { ChatContextProvider } from './context/ChatContext.jsx'
+import AuthLayout from './components/AuthLayout.jsx'
 const router = createBrowserRouter([{
   path: '/',
   element: <App />,
   children: [
     {
       path: '/',
-      element: <Home />
+      element: 
+      <AuthLayout authentication={false}>
+      <Home />
+      </AuthLayout>
     },
     {
       path: '/signup',
-      element: <SignUp />
+      element: 
+      <AuthLayout authentication={false}>
+      <SignUp />
+      </AuthLayout>
     },
     {
       path: '/signin',
-      element: <SignIn />
+      element: 
+      <AuthLayout authentication={false}>
+      <SignIn />
+      </AuthLayout>
     },
     {
       path: '/chats/:id',
-      element: <ChatPage />
+      element: 
+      <AuthLayout>
+      <ChatPage />
+      </AuthLayout>
     },
     {
       path: '/chats/group/:groupid',
-      element: <ChatPage />
+      element: 
+      <AuthLayout>
+      <ChatPage />
+      </AuthLayout>
     },
     {
       path: '/chats',
-      element: <NoChatSelected />
+      element: 
+      <AuthLayout>
+      <NoChatSelected />
+      </AuthLayout>
     },
   ]
 }])
@@ -53,7 +72,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <LoadingContextProvider>
               <ResponseContextProvider>
                 <ErrorContextProvider>
+                <ChatContextProvider>
           <RouterProvider router={router} />
+          </ChatContextProvider>
           </ErrorContextProvider>
           </ResponseContextProvider>
           </LoadingContextProvider>
