@@ -65,7 +65,7 @@ const Message = ({ message }) => {
             {isSender && (
                 <div className="absolute top-4 left-4 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" onClick={deleteMessage}>
                     <Button sx={{color:"white"}} variant='outlined' color='error'>
-                    <DeleteIcon className=" text-red-600 cursor-pointer" /> {"Delete"} 
+                    <DeleteIcon className="text-red-500 cursor-pointer" />  
                     </Button>
                 </div>
             )}

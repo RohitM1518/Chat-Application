@@ -34,6 +34,7 @@ const Chat = () => {
     const {setIsLoading}=useLoadingContext()
     const {setResponse}=useResponseContext()
     const navigate = useNavigate()
+    const {isSidebar}=useSidebarContext()
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -143,7 +144,7 @@ const Chat = () => {
         setModification('')
     }
     return (
-        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 max-lg:pb-32 flex flex-col justify-between ${alert?" p-20":""}`} >
+        <div className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-full h-screen pb-24 p-6 max-lg:p-2 max-lg:pb-32 flex flex-col justify-between ${alert?" p-20":""} ${isSidebar?"":"xl:px-36"}`} >
             {alert && <Alert message="Are you sure?" url={`${backendUrl}/chat/remove/${chat._id}`}/>}
             {chat && !chat.isGroupChat && <div className='mb-5'>
                 <User user={receiver} onlyName={true}/>

@@ -10,6 +10,7 @@ import {LinearProgress} from '@mui/material'
 import { useLoadingContext } from './context/LoadingContext'
 import { useResponseContext } from './context/ResponseContext'
 import { useErrorContext } from './context/ErrorContext'
+import { useSidebarContext } from './context/SidebarContext'
 
 
 function App() {
@@ -17,6 +18,19 @@ function App() {
   const refreshToken = useSelector(state => state?.user?.currentUser?.refreshToken)
   const accessToken = useSelector(state => state?.user?.accessToken)
   const {socket} = useSocketContext();
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const {setIsSidebar}=useSidebarContext()
+  useEffect(()=>{
+    if(screenSize.width>768){
+      setIsSidebar(true)
+    }
+    else{
+      false
+    }
+  },[screenSize])
   // console.log("socket",socket)
   useEffect(()=>{
     if(socket){

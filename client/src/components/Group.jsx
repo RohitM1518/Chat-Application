@@ -75,8 +75,8 @@ const Group = ({ group, onlyName }) => {
           </div>
         </div>
       </div>
-      <div className='w-full'>
-        <div className=' flex w-full justify-between'>
+      <div className='w-full flex flex-col'>
+        <div className='flex w-full justify-between'>
           <div onClick={handleSidebar}>
             <h2 className=' text-white text-lg font-semibold block'>{group?.name}</h2>
           </div>

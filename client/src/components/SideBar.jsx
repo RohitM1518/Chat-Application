@@ -12,6 +12,7 @@ import { useSidebarContext } from '../context/SidebarContext';
 import { useErrorContext } from '../context/ErrorContext';
 import { useLoadingContext } from '../context/LoadingContext';
 import { useResponseContext } from '../context/ResponseContext';
+import ClosePNG from '../assets/close.png'
 
 const SideBar = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -29,6 +30,11 @@ const SideBar = () => {
     const {setError} = useErrorContext()
     const {setIsLoading}=useLoadingContext()
     const {setResponse}=useResponseContext()
+    const [screenSize, setScreenSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    // console.log("Screen size",screenSize)
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -79,7 +85,11 @@ const SideBar = () => {
     };
     const selectUser=(user)=>{
         navigate(`/chats/${user._id}`) 
-        // setIsSidebar(false)
+        if(screenSize.width>768){
+            setIsSidebar(true)
+            return
+        }
+        setIsSidebar(false)
     }
     const createAGroupChat = async () => {
         try {
@@ -108,9 +118,10 @@ const SideBar = () => {
     }
 
     return (
-        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 relative py-10 px-2 w-96 z-10 flex flex-col gap-6  max-lg:w-full rounded-r-md h-screen overflow-auto max-lg:px-7 '>
-            {isSidebar && <div className='hover:cursor-pointer absolute right-5 top-3 mb-3' onClick={() => setIsSidebar(false)}>
-                <MdCancelPresentation style={{width:25,height:25,color:'white'}}/>
+        <div className='bg-gradient-to-t from-rose-500 via-purple-500 to-cyan-600 relative py-10 px-2 w-96 z-10 flex flex-col gap-6  max-lg:w-full h-screen overflow-auto max-lg:px-7 '>
+            {isSidebar && <div className='hover:cursor-pointer absolute right-5 top-2' onClick={() => setIsSidebar(false)}>
+                {/* <MdCancelPresentation style={{width:25,height:25,color:'white'}}/> */}
+                <img src={ClosePNG} alt="" width={18} height={20} className=''/>
             </div>}
             {!status && showUsers && <Button variant='contained' onClick={() => setStatus(true)}>Create Group Chat</Button>}
             {status && <div className=' flex flex-col justify-center gap-4'>
