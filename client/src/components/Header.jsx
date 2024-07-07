@@ -28,6 +28,10 @@ const Header = () => {
     const { isSidebar, setIsSidebar }= useSidebarContext()
     const {setIsLoading}= useLoadingContext()
     const {setResponse}=useResponseContext()
+    const [screenSize, setScreenSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     const handleLogout = async () => {
         try {
             setIsLoading(true)
@@ -60,6 +64,12 @@ const Header = () => {
                     <div className="relative flex items-center gap-4 ml-4 max-sm:hidden">
                         <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
                         <h5 className=' text-white text-lg font-semibold'>{user?.fullName}</h5>
+                    </div>
+                )}
+            {isLogin && location.pathname=='/' && screenSize.width<= 640 && (
+                    <div className="relative flex items-center gap-4 ml-4">
+                        <Avatar alt={user?.fullName} src={user?.avatar} sx={{ width: 50, height: 50 }} />
+                        {/* <h5 className=' text-white text-lg font-semibold'>{user?.fullName}</h5> */}
                     </div>
                 )}
             <Toolbar className="w-full flex items-center">
